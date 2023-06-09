@@ -23,7 +23,20 @@
     margin-top: 0vw;
 
 }
+#recipeLogo {
 
+    width: 6.5vw;
+    height: 5.5vw;
+    padding-bottom:1vw;
+
+}
+#recipeLogoBox {
+
+    width: 9.5vw;
+    height: 8.5vw;
+    margin-top: 0vw;
+
+}
 body {
     background-color: #141414;
     font-family: 'Open Sans', sans-serif;
@@ -140,13 +153,12 @@ button:active {
 
 /*box that displays the inside of the calc*/
 #data {
-    width: 40vw;
+    width: 98vw;
     height: 45vw;
     position: absolute;
-    top: 29vw;
+    top: 32vw;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 1000px;
     margin: 30px auto;
     border-style: outset;
     border-radius: 50px;
