@@ -1,0 +1,436 @@
+/* CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+}
+
+/*CSS for the top of the page*/
+#title {
+
+    color: #2b2b2b;
+    width: 100%;
+    font-size: 1vw;
+    margin: 0;
+    height: 7vw;
+
+}
+
+#logo {
+
+    width: 4.5vw;
+    margin-top: 0vw;
+
+}
+
+body {
+    background-color: #141414;
+    font-family: 'Open Sans', sans-serif;
+    background-image: url("Images/Wave1.gif");
+    object-fit: cover;
+    background-size: 100%;
+}
+
+
+/* BUTTON STYLE */
+button {
+    background-color: #6890e6;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4vw 1vw;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 3vw;
+    font-weight: 600;
+}
+
+.link-btn {
+    background-color: transparent;
+    border: none;
+    color: #bbd0fc;
+    text-shadow: none;
+}
+
+.link-btn:hover {
+    background-color: transparent;
+    color: white;
+}
+
+.link-btn:active {
+    background-color: transparent;
+}
+
+#TopButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin: 5px auto;
+}
+
+#TopButtons .left-btn {
+    margin-right: auto;
+}
+
+
+#NumButtons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4vw;
+    padding: 0.4vw 2vw;
+
+    width: 16vw;
+    height: 15.1vw;
+    float: left;
+}
+
+#basicArithmetic {
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
+    gap: 0.4vw;
+    padding: 1.4vw 1vw;
+
+    width: 16vw;
+    height: 15.1vw;
+    float: right;
+}
+
+#advancedArithmetic {
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4vw;
+    padding: 0.4vw 1vw;
+
+    float: left;
+    height: 19.1vw;
+    width: 34.5vw;
+    margin: 0;
+}
+
+button:hover {
+    background-color: rgb(142, 164, 212);
+}
+
+button:active {
+    background-color: #c6cfca;
+}
+
+/*CSS for text*/
+.text, button, li, .buttons {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 1px 5px #b1be75;
+}
+
+.text2 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    color: white;
+}
+
+/*CSS for main components*/
+.displayChange, .data, .sidebar {
+    background-color: #3850d6;
+    color: white;
+}
+
+
+/*box that displays the inside of the calc*/
+#data {
+    width: 40vw;
+    height: 45vw;
+    position: absolute;
+    top: 29vw;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 1000px;
+    margin: 30px auto;
+    border-style: outset;
+    border-radius: 50px;
+    border-color: #2b2b2b;
+    border: 5px solid #222;
+    padding: 1vw;
+    min-width: 250px;
+
+}
+
+.inner {
+    width: 90%;
+    margin: 0px auto;
+}
+
+/* History button CSS */
+#historyList {
+    background-color: #929292;
+    color: white;
+    width: 40%;
+    font-size: xx-large;
+    display: none;
+    border: 3px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    padding: 20px;
+}
+
+#historyList button {
+    width: 100%;
+    margin: 7px 0;
+    background-color: #41423d;
+}
+
+#historyList #closeBtn {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+/*box that displays the result of calculations*/
+#result {
+    width: 100%;
+    background-color: #222;
+    color: #ffffff;
+    padding: 10px;
+    border-color: #8f8f8f;
+    border-style: solid;
+    border-radius: 15px;
+    font-weight: bold;
+    text-align: right;
+    height: 67px;
+    font-size: 0;
+    overflow: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
+}
+
+#input {
+    font-size: xx-large;
+}
+
+/*CSS for the scrollbar*/
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #3c3d46;
+    border-radius: 25px;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background-color: #555;
+    border-radius: 10px;
+    border: 1px solid #b1b1b1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+}
+
+/*CSS for the unclosed parenthesis*/
+#unclosed-parentheses {
+    font-size: xx-large;
+    color: dimgray;
+}
+
+/*CSS for Themes customization*/
+.sidebar {
+
+    height: 105vh;
+    position: absolute;
+    top: auto;
+    left: 0;
+
+    margin-left: 0;
+    border-style: solid;
+    border-color: #3d3d3d;
+    border-top-style: none;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0.2vw;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 0.5vw;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 0vw;
+    text-decoration: none;
+    color: #000;
+}
+
+.sidebar li a:hover {
+    background-color: #555;
+    color: #000000;
+}
+
+.sidebar.visible {
+    width: 3vw;
+}
+
+
+/*CSS for navbar*/
+nav {
+    text-align: center;
+    border-style: solid;
+    border-color: #3d3d3d;
+    height: 7vw;
+}
+
+li {
+
+    font-size: larger;
+    font-weight: 300;
+    font-stretch: ultra-condensed;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0vw;
+    overflow: hidden;
+}
+
+nav li {
+    float: left;
+    padding: 0vw;
+}
+
+nav li a {
+    display: block;
+    color: #000000;
+    text-align: center;
+    padding: 1vw 1vw;
+    text-decoration: none;
+}
+
+nav li a:hover {
+    background-color: #111;
+}
+
+/*Color picker*/
+#color-picker {
+    float: right;
+    width: 30%;
+    height: 600px;
+    padding: 10px;
+    margin: 10px;
+
+}
+
+#color-picker-btn {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 33vw;
+}
+
+#color-hide {
+    display: none;
+    width: 200px;
+    padding: 5px;
+    background-color: #313131;
+
+}
+
+/*Changes the look of the actual color picker box*/
+input[type="color"] {
+    border-radius: 50%;
+    background-color: #000000;
+    width: 25px;
+    height: 25px;
+    opacity: 0;
+    display: block;
+}
+
+#color-box1, #color-box2, #color-box3 {
+    background-color: #000000;
+    width: 15%;
+    border-radius: 50%;
+
+}
+
+/*dynamic resize for different screen sizes*/
+
+@media screen and (width < 1300px) {
+    .data {
+        height: 48vw;
+    }
+}
+
+@media screen and (width < 970px) {
+    .data {
+        height: 51vw;
+    }
+}
+
+@media screen and (width < 690px) {
+    .data {
+        height: 56vw;
+    }
+}
+
+/* Dropdown styling */
+
+.dropdown {
+    position: relative;
+    margin-left: 1vw;
+    width: 17vw;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.dropdown-content {
+    display: none;
+    top: 100%;
+    left: 0;
+    background-color: #3850d6;
+    border-color: #141414;
+    border-style: solid;
+    border-top: none;
+    border-width: 0.2vw;;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 0.4vw 1vw;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 3vw;
+    font-weight: 600;
+}
+
+.dropdown-content a:hover {
+    background-color: #adadad;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+a {
+    color: white;
+}
+

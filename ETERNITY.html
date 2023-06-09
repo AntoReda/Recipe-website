@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>ETERNITY CALCULATOR</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="engine.js"></script>
+    <script defer src="dynamic_styles.js"></script>
+    <script defer src="math.js"></script>
+</head>
+
+<body id="background">
+<!--Title-->
+<div class="displayChange" id="title">
+    <nav>
+        <ul>
+            <li><a href="ETERNITY.html">
+                <image id="logo" src="Images/Logo.png"></image>
+            </a></li>
+            <li><span class="text" style="text-decoration: underline;  font-size: x-large;">ETERNITY CALCULATOR</span>
+            </li>
+            <li><span class="text" style="font-size: medium; font-size: x-large;">&emsp; by TEAM K  &emsp;</span></li>
+            <li>
+                <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
+            </li>
+            <li class="dropdown">
+                <button class="button" style="width:17vw;">Themes</button>
+                <div class="dropdown-content" id="sidebar">
+                    <a href="#" onclick="styleHome()" class="text">Home</a>
+                    <a href="#" onclick="styleGreen()" class="text">Cyber Jungle</a>
+                    <a href="#" onclick="stylePink()" class="text">Bubble Gum</a>
+                    <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
+                    <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
+                    <a href="#" onclick="styleCave()" class="text">Seaside City</a>
+                    <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
+                    <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
+                    <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
+                </div>
+            </li>
+
+        </ul>
+    </nav>
+    <div id="color-picker">
+        <div id="color-hide">
+            <div id="" style="background-color: #525252;; padding:5px;">
+                <label class="text2"> Change the color of main components
+                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></input></div>
+                </label>
+                <label class="text2"> Change the button color
+                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></input></div>
+                </label>
+                <label class="text2"> Change the button hover color
+                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
+                    </input>        </label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="historyList">
+    <div id="closeBtn" onclick="calcHistory()">X</div>
+    <h3>Calculation History</h3>
+</div>
+
+<main>
+
+    <!--Inside of the calculator box-->
+    <div class="displayChange" id="data">
+        <div class="inner" id="calc-buttons">
+            <div id="result">
+                <span id="input" style="overflow-x: hidden;"></span>
+                <span id="unclosed-parentheses"></span>
+            </div>
+            <div id=TopButtons>
+                <button onclick="calcHistory()" class="left-btn">&#128337;</button>
+                <button onclick="Delete()">Del</button>
+                <button onclick="Clear()">Clear</button>
+            </div>
+            <div id="NumButtons">
+                <button id="1" class="input-btn">1</button>
+                <button id="2" class="input-btn">2</button>
+                <button id="3" class="input-btn">3</button>
+                <button id="4" class="input-btn">4</button>
+                <button id="5" class="input-btn">5</button>
+                <button id="6" class="input-btn">6</button>
+                <button id="7" class="input-btn">7</button>
+                <button id="8" class="input-btn">8</button>
+                <button id="9" class="input-btn">9</button>
+                <button id="0" class="input-btn" style="grid-column: 1 / span 3;">0</button>
+            </div>
+            <div id="basicArithmetic">
+                <button class="input-btn">+</button>
+                <button class="input-btn">-</button>
+                <button class="input-btn">&times;</button>
+                <button class="input-btn">&divide;</button>
+                <button class="input-btn">.</button>
+                <button class="input-btn">^</button>
+                <button class="equal" id="=" onclick="Equals()"
+                        style="grid-row: 1 / span 4; grid-column: 3; height:95.6%; width:100px; max-width:5vw; background-color: rgb(204, 119, 8);">
+                    =
+                </button>
+            </div>
+            <div id="advancedArithmetic">
+                <button class="input-btn">%</button>
+                <button class="input-btn">&radic;</button>
+                <button class="input-btn">(</button>
+                <button class="input-btn">)</button>
+
+                <button class="input-btn">arccos</button>
+                <button class="input-btn">sinh</button>
+                <button onclick="std()">&sigma;</button>
+
+                <button class="input-btn">log</button>
+                <button onclick="mad()">M.A.D.</button>
+                <button class="input-btn">&Gamma;</button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
