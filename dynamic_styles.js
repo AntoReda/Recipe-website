@@ -121,15 +121,15 @@ function style (Calc, Buttons, Hover, URL, ButtonText, Text, Equals, linkColor, 
 
 function styleHome () {
   //   style( CalcColor, ButtonColor, HoverColor, URL, ButtonTextColor, TextColor, Equal-button Color, link-color, linkhover-color )
-  style('#3850d6', '#6890e6', 'grey', 'url(\'Images/Wave1.gif\')', 'White', 'White', 'rgb(204, 119, 8)', '#bbd0fc', 'white')
+  style('#E0D4C6', '#918e8e', '#798177', 'url(\'Images/Logo.jpg\')', 'White', 'White', 'rgb(204, 119, 8)', '#bbd0fc', 'white')
 }
 
-function styleGreen () {
-  style('#9bcc3f', 'grey', 'black', 'url(\'Images/Green.gif\')', 'White', 'Black', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
+function styleSalmon () {
+  style('#F2Be9C', '#F5E7B2', '#A07340', 'url(\'Images/salmon.png\')', 'White', 'Black', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
 }
 
-function stylePink () {
-  style('pink', '#8ed2ec', '#57b6db', 'url(\'Images/BubbleGum.gif\')', '#851b5f', null, 'rgb(225, 108, 154)', 'white', 'rgb(225, 108, 154)')
+function styleVeggies () {
+  style('#E0D4C6', '#AFC0AD', '#798177', 'url(\'Images/Veggies.jpg\')', 'White', 'White', 'rgb(204, 119, 8)', '#bbd0fc', 'white')
 }
 
 function styleCloud () {
@@ -153,6 +153,6 @@ function styleCube () {
 }
 
 function styleDark () {
-  style('#000000', '#4f544e', '#777f75', 'url(\'Images/black-square.jpg\')', 'White', 'White', 'rgb(153, 167, 150)', '#777f75', 'white')
+  style('#454545', '#4f544e', '#777f75', 'url(\'Images/black-square.jpg\')', 'White', 'White', 'rgb(153, 167, 150)', '#777f75', 'white')
 }
 
