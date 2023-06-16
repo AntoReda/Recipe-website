@@ -5,9 +5,8 @@
 <head>
     <title>Recipe Website</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="engine.js"></script>
     <script defer src="dynamic_styles.js"></script>
-    <script defer src="math.js"></script>
+   
 </head>
 
 <body id="background">
@@ -15,7 +14,7 @@
 <div class="displayChange" id="title">
     <nav>
         <ul>
-            <li><a href="Recipe_HomePage.html">
+            <li><a href="Recipe_HomePage.php">
                 <image id="logo" src="Images/Logo.jpg"></image>
             </a></li>
             <li><span class="Heading1">Recipe Website</span>
@@ -64,27 +63,54 @@
 </div>
 
 <main>
-
-    <!--Inside of the calculator box-->
-    <div class="displayChange">
-      <p class="Heading1">Recipes</p>
-            <div class="RecipeList">
-                <form id="recipeForm">
-                    <label for="recipeName">Recipe Name:</label>
-                    <input type="text" id="recipeName" name="recipeName" required>
+<?php
+						$servername = "localhost"; // Replace with your server name if necessary
+                        $username = "root"; // Replace with your MySQL username
+                        $password = ""; // Replace with your MySQL password
+                        $database = "recipewebsite"; // Replace with your database name
+                        
+                        // Create a connection
+                        $con = mysqli_connect($servername, $username, $password, $database);
+						
+						// Check connection
+						if (mysqli_connect_errno())
+						{
+						echo "Failed to connect to MySQL: " . mysqli_connect_error();
+						}
+			
+    echo "
+    <div class='displayChange'>
+      <p class='Heading1'>Recipes</p>
+            <div class='RecipeList'>
+                <form action='redirect.php' method='post' id='recipeForm' enctype='multipart/form-data'>
+                    <label for='recipeName'>Recipe Name:</label>
+                    <input type='text' id='recipeName' name='INrecipeName'required>
                   
-                    <label for="recipeInstructions">Recipe Instructions:</label>
-                    <textarea id="recipeInstructions" name="recipeInstructions" required></textarea>
+                    <label for='recipeInstructions'>Recipe Instructions:</label>
+                    <textarea id='recipeInstructions' name='INrecipeInstructions' required></textarea>
                   
-                    <label for="recipeImage">Recipe Image:</label>
-                    <input type="file" id="recipeImage" name="recipeImage" accept="image/*" required>
-                  
-                    <input type="submit" value="Submit">
+                    <label for='recipeImage'>Recipe Image:</label>
+                    <input type='file' id='recipeImage' name='INrecipeImage' accept='image' required>
+                    <form action='process_form.php' method='POST'>
+                    <label for='dropdown'>Pick a food category:</label>
+                    <select id='dropdown' name='Type'>
+                      <option value='meat'>Meat</option>
+                      <option value='fish'>Fish</option>
+                      <option value='veggie'>Veggie</option>
+                      <option value='pasta'>Pasta</option>
+                      <option value='Sandwhich'>Sandwhich</option>
+                      <option value='soups'>Soups</option>
+                      <option value='desserts'>Desserts</option>
+                      <option value='other'>Other</option>
+                    </select>
+                   
+                    <input type='submit' value='Submit' name='submit'>
                   </form>
-                  
+                
             
         </div>
-    </div>
+    </div>";
+    ?>
 </main>
 </body>
 

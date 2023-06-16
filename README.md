@@ -1,2 +1,0 @@
-# ETERNITY TEAM K
- 

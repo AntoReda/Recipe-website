@@ -209,8 +209,9 @@ padding: 1vw;
 /*box that displays the inside of the calc*/
 
 .displayChange{
-margin-top: 2vw;
+
 margin:1vw;
+margin-top: 4vw;
 border-radius: 8px;
 border-style: outset;
 border-color: #313131;
@@ -222,7 +223,7 @@ position: relative;
     grid-template-columns: repeat(9, 2fr);
     gap:0.9vw;
     margin: 0px auto;
-    padding:20px;
+    padding:1vw;
     margin-top: 2vw;
    
 }
