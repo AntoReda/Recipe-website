@@ -8,7 +8,28 @@
     <script defer src="dynamic_styles.js"></script>
    
 </head>
+<script>
+    function handleKeyPress(event) {
+      if (event.keyCode === 13) { // Check if Enter key is pressed
+        event.preventDefault(); // Prevent the default behavior of the Enter key
 
+        var textarea = event.target;
+        var currentText = textarea.value;
+        var cursorPosition = textarea.selectionStart;
+
+        // Insert bullet point and newline at the cursor position
+        var updatedText = currentText.slice(0, cursorPosition) + '\n• ' + currentText.slice(cursorPosition);
+
+        textarea.value = updatedText;
+        
+        // Move the cursor position after the inserted bullet point
+        textarea.selectionStart = textarea.selectionEnd = cursorPosition + 2;
+        
+        // Trigger the input event to update the textarea's content and height
+        textarea.dispatchEvent(new Event('input'));
+      }
+    }
+  </script>
 <body id="background">
 <!--Title-->
 <div class="displayChange" id="title">
@@ -80,14 +101,17 @@
 			
     echo "
     <div class='displayChange'>
-      <p class='Heading1'>Recipes</p>
+      <p class='Heading1'>Adding Recipes</p>
             <div class='RecipeList'>
                 <form action='redirect.php' method='post' id='recipeForm' enctype='multipart/form-data'>
                     <label for='recipeName'>Recipe Name:</label>
                     <input type='text' id='recipeName' name='INrecipeName'required>
+
+                    <label for='recipeIngredients'>Recipe Ingredients:<img src = 'Images/Ingredients.png' class = 'images'></label>
+                   <textarea onkeydown='handleKeyPress(event)' id='recipeIngredients' name='INrecipeIngredients' required></textarea>
                   
-                    <label for='recipeInstructions'>Recipe Instructions:</label>
-                    <textarea id='recipeInstructions' name='INrecipeInstructions' required></textarea>
+                    <label for='recipeInstructions'>Recipe Instructions:<img src = 'Images/Instructions.png' class = 'images'></label>
+                    <textarea onkeydown='handleKeyPress(event)' id='recipeInstructions' name='INrecipeInstructions' required></textarea>
                   
                     <label for='recipeImage'>Recipe Image:</label>
                     <input type='file' id='recipeImage' name='INrecipeImage' accept='image' required>

@@ -12,18 +12,20 @@
 <script>
 
      // Show or hide the div based on the selected tab
-     function show(tabName) {
+     function show(tabName) 
+     {
+        //hides all recipe boxes
         var allOtherDivs = document.getElementsByName('recipeBox');
-        for (var i = 0; i < allOtherDivs.length; i++) {
+        for (var i = 0; i < allOtherDivs.length; i++) 
+        {
             allOtherDivs[i].style.display = 'none';
-    } 
-    
-  var starDivs = document.getElementsByClassName(tabName); // assuming all divs have the class 'recipeDiv'
-  for (var i = 0; i < starDivs.length; i++) {
-    starDivs[i].style.display = 'block';
-    } 
-    
-  }
+        } 
+        //unhides the correct recipeBoxes
+        var starDivs = document.getElementsByClassName(tabName); 
+        for (var i = 0; i < starDivs.length; i++) {
+        starDivs[i].style.display = 'block';
+        } 
+    }
 
   function showAll() {
       
@@ -133,12 +135,12 @@
     <!--Inside of the recipe list-->
     <?php
 						$servername = "localhost"; // Replace with your server name if necessary
-                        $username = "root"; // Replace with your MySQL username
-                        $password = ""; // Replace with your MySQL password
-                        $database = "recipewebsite"; // Replace with your database name
-                        
-                        // Create a connection
-                        $con = mysqli_connect($servername, $username, $password, $database);
+            $username = "root"; // Replace with your MySQL username
+            $password = ""; // Replace with your MySQL password
+            $database = "recipewebsite"; // Replace with your database name
+            
+            // Create a connection
+            $con = mysqli_connect($servername, $username, $password, $database);
 						
 						// Check connection
 						if (mysqli_connect_errno())
@@ -164,7 +166,7 @@
             $image = $row['Image'] ;
             $type = $row['Type'] ;
             //This $image var is stored as a BLOB in SQL database
-            echo "<div name = 'recipeBox' class = '$type' style = 'display:none;'><a href='Recipe_Instructions.php'> <button id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></a></div>";
+            echo "<form action='Recipe_Instructions.php?id=1' method='get' id='recipeForm' enctype='multipart/form-data'><div name = 'recipeBox' class = '$type' style = 'display:none;'><button type='submit' name='$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></div></form>";
 
 
             

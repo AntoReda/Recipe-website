@@ -1,12 +1,40 @@
-/* CSS Reset */
-*, *::before, *::after {
-    box-sizing: border-box;
-    user-select: none;
-    margin: 0;
-    padding: 0;
+
+/* Global CSS elements *************************************************************/
+/*CSS for text*/
+.text, button, li, .buttons, .Heading1{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 1px 5px #b1be75;
 }
 
-/*CSS for the top of the page*/
+.text2 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    color: white;
+}
+
+.Heading1{
+font-size: xx-large;
+padding: 1vw;
+}
+
+.displayChange{
+
+margin:1vw;
+margin-top: 4vw;
+border-radius: 8px;
+border-style: outset;
+border-color: #313131;
+position: relative;
+}
+#logo {
+
+    width: 4.5vw;
+    margin-top: 0vw;
+
+}
+
 #title {
 
     color: #2b2b2b;
@@ -16,34 +44,12 @@
     height: 7vw;
 
 }
-
-#logo {
-
-    width: 4.5vw;
-    margin-top: 0vw;
-
-}
-#recipeLogo {
-
-    width: 6.5vw;
-    height: 5.5vw;
-    padding-bottom:0.6vw;
-
-}
-#recipeAdd{
-    width: 3.8vw;
-    height: 3.5vw;
-}
-#recipeButtonAdd{
-    width: 5.8vw;
-    height: 4.5vw;
-}
-#recipeLogoBox {
-
-    width: 9.5vw;
-    height: 8.5vw;
-    margin-top: 0vw;
-
+/* CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    user-select: none;
+    margin: 0;
+    padding: 0;
 }
 /*CSS for main components*/
 .displayChange, .data, .sidebar {
@@ -60,33 +66,6 @@
     z-index: 0;
   }
   
-  .tab {
-    flex: 1;
-    border-radius: 1vw;
-  }
-  
-  .tab input[type="radio"] {
-    display: none;
-  }
-  
-  .tab label {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #f2f2f2;
-    cursor: pointer;
-    border-top-left-radius: 1vw;
-    border-top-right-radius: 1vw;
-    border-style: solid;
-  }
-  
-  .tab input[type="radio"]:checked + label {
-    background-color: #ccc;
-  }
-  
-  .tab-content {
-    padding: 10px;
-    background-color: #f2f2f2;
-  }
   
 body {
     background-color: #c0c0c0;
@@ -115,6 +94,14 @@ button {
     text-overflow: ellipsis;
 }
 
+button:hover {
+    background-color: #798177;
+}
+
+button:active {
+    background-color: #c6cfca;
+}
+
 .link-btn {
     background-color: transparent;
     border: none;
@@ -141,82 +128,85 @@ button {
 #TopButtons .left-btn {
     margin-right: auto;
 }
+/* HomePage CSS ********************************************************************/
+#recipeLogo {
 
+    width: 6.5vw;
+    height: 5.5vw;
+    padding-bottom:0.6vw;
 
-#NumButtons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.4vw;
-    padding: 0.4vw 2vw;
-
-    width: 16vw;
-    height: 15.1vw;
-    float: left;
 }
-
-#basicArithmetic {
-    display: grid;
-    grid-template-columns: repeat(2, 2fr);
-    gap: 0.4vw;
-    padding: 1.4vw 1vw;
-
-    width: 16vw;
-    height: 15.1vw;
-    float: right;
+#recipeAdd{
+    width: 3.8vw;
+    height: 3.5vw;
 }
-
-#advancedArithmetic {
-    display: grid;
-    position: relative;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.4vw;
-    padding: 0.4vw 1vw;
-
-    float: left;
-    height: 19.1vw;
-    width: 34.5vw;
-    margin: 0;
-}
-
-button:hover {
-    background-color: #798177;
-}
-
-button:active {
-    background-color: #c6cfca;
-}
-
-/*CSS for text*/
-.text, button, li, .buttons, .Heading1{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0px 1px 5px #b1be75;
-}
-
-.text2 {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
-    color: white;
-}
-
-.Heading1{
-font-size: xx-large;
-padding: 1vw;
-}
-
-
-/*box that displays the inside of the calc*/
-
-.displayChange{
-
-margin:1vw;
-margin-top: 4vw;
-border-radius: 8px;
-border-style: outset;
-border-color: #313131;
+.tab {
+    flex: 1;
+    border-radius: 1vw;
+  }
+  
+  .tab input[type="radio"] {
+    display: none;
+  }
+  
+  .tab label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f2f2f2;
+    cursor: pointer;
+    border-top-left-radius: 1vw;
+    border-top-right-radius: 1vw;
+    border-style: solid;
+  }
+  
+  .tab input[type="radio"]:checked + label {
+    background-color: #ccc;
+  }
+  
+  .tab-content {
+    padding: 10px;
+    background-color: #f2f2f2;
+  }
+  .images{
+    width:5vw;
+    height:drop;
+  }
+/* InstructionsPage CSS ************************************************************/
+.IngredientsBox{
 position: relative;
+
 }
+
+.InstructionsBox{
+    position: relative;
+}
+
+/* AddPage CSS *********************************************************************/
+
+#recipeIngredients{
+    width:50vw;
+    height:20vw;
+}
+#recipeInstructions{
+    width:50vw;
+    height:20vw;
+}
+
+#recipeButtonAdd{
+    width: 5.8vw;
+    height: 4.5vw;
+}
+#recipeLogoBox {
+
+    width: 9.5vw;
+    height: 8.5vw;
+    margin-top: 0vw;
+
+}
+
+
+
+
 .RecipeList{
     z-index: 1;
     display: grid;
@@ -520,6 +510,12 @@ input[type="color"] {
 
 /* Dropdown styling */
 
+/* Dropdown Types */
+#dropdown{
+    margin:2vw;
+    background-color: #c2c9ce;
+}
+/* Dropdown themes */
 .dropdown {
     position: relative;
     margin-left: 1vw;

@@ -9,7 +9,7 @@
 		<title>Adding Recipe</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	
+		<link rel="stylesheet" href="style.css">
 	</head>
 	<body class="is-preload">
 					
@@ -44,15 +44,17 @@
                             $instr = $_POST['INrecipeInstructions'];
                             $image = $_FILES['INrecipeImage']['tmp_name'];
 							$type = $_POST['Type'];
+							$ingr = $_POST['INrecipeIngredients'];
                             // Read the image file
                             $imgData = file_get_contents($image);
                         
                             // Escape special characters in the binary data
                             $imgData = mysqli_real_escape_string($con, $imgData);
                         
-                            $sql = "INSERT INTO recipes VALUES ('$name', '$instr', '$imgData', '$type')";
+                            $sql = "INSERT INTO recipes VALUES ('$name', '$instr', '$imgData', '$type', '$ingr' )";
                             mysqli_query($con, $sql);
                         }
+						
                         
 
                         
@@ -88,8 +90,8 @@
 						*/
 					?>
 					
-					
-					<button  onclick="window.location.href='Recipe_HomePage.php'" > Back home </button>
+					<p class='Heading1'>Recipe has been added!</p>
+					<button onclick="window.location.href='Recipe_HomePage.php'" > Back home </button>
 					
 					
 	</body>
