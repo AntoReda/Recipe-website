@@ -98,7 +98,7 @@
         </div>
         <div class="tab">
           <input type="radio" id="tab2" name="tabs">
-          <label for="tab2" onclick="show('meat')">Meats</label>
+          <label for="tab2" onclick="show('meats')">Meats</label>
         </div>
         <div class="tab">
             <input type="radio" id="tab3" name="tabs">
@@ -110,24 +110,27 @@
           </div>
           <div class="tab">
             <input type="radio" id="tab5" name="tabs">
-            <label for="tab5" onclick="show('pasta')">Pasta</label>
+            <label for="tab5" onclick="show('pastas')">Pasta</label>
           </div>
           <div class="tab">
             <input type="radio" id="tab6" name="tabs">
-            <label for="tab6"onclick="show('Sandwhich')">Sandwich</label>
+            <label for="tab6"onclick="show('sandwiches')">Sandwich</label>
           </div>
           <div class="tab">
             <input type="radio" id="tab7" name="tabs">
-            <label for="tab7"onclick="show('soups')">Soups</label>
+            <label for="tab7" onclick="show('soups')">Soups</label>
           </div>
           <div class="tab">
             <input type="radio" id="tab8" name="tabs">
-            <label for="tab8">Desserts</label>
+            <label for="tab8" onclick="show('desserts')">Desserts</label>
           </div>
-          
           <div class="tab">
             <input type="radio" id="tab9" name="tabs">
-            <label for="tab9">Favourites</label>
+            <label for="tab9" onclick="show('others')">Other</label>
+          </div>
+          <div class="tab">
+            <input type="radio" id="tab10" name="tabs">
+            <label for="tab9" onclick="show('fav')">Favourites</label>
           </div>
         <!-- Add more tabs here if needed -->
       </div>
@@ -147,7 +150,8 @@
 						{
 						echo "Failed to connect to MySQL: " . mysqli_connect_error();
 						}
-                        $table = mysqli_query($con,"SELECT * FROM recipes") or die(mysqli_error($this->db_link));
+            
+            $table = mysqli_query($con,"SELECT * FROM recipes") or die(mysqli_error($this->db_link));
                        
                         
                         
@@ -166,10 +170,7 @@
             $image = $row['Image'] ;
             $type = $row['Type'] ;
             //This $image var is stored as a BLOB in SQL database
-            echo "<form action='Recipe_Instructions.php?id=1' method='get' id='recipeForm' enctype='multipart/form-data'><div name = 'recipeBox' class = '$type' style = 'display:none;'><button type='submit' name='$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></div></form>";
-
-
-            
+            echo "<div name = 'recipeBox' class = '$type' style = 'display:none;'><form action='Recipe_Instructions.php' method='get' id='recipeForm' enctype='multipart/form-data'><button type='submit' name='submit2' value = '$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></form></div>";
             }
                 
             

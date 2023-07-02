@@ -81,40 +81,50 @@
             {
             echo "Failed to connect to MySQL: " . mysqli_connect_error();
             }
-           // $table = mysqli_query($con,"SELECT * FROM recipes WHERE ") or die(mysqli_error($this->db_link));
+          
            
-            $recipeId = $_GET['id'];
-            echo " $recipeId";
            
-            if (isset($_POST['submit2'])) {
-                echo"HIIIII";
-                // $name = $_POST['INrecipeName'];
-                // $instr = $_POST['INrecipeInstructions'];
-                // $image = $_FILES['INrecipeImage']['tmp_name'];
-                // $type = $_POST['Type'];
-                // $ingr = $_POST['INrecipeIngredients'];
-                // // Read the image file
-                // $imgData = file_get_contents($image);
-            
-                // // Escape special characters in the binary data
-                // $imgData = mysqli_real_escape_string($con, $imgData);
-            
-                // $sql = "SELECT * FROM recipes WHERE Name='$name' AND Instructions = '$instr' AND Type='$type' AND Ingredients='$ingr' ";
-                // mysqli_query($con, $sql);
+           
+            if (isset($_GET['submit2'])) {
+                $recipeId = $_GET['submit2'];
+                $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeId' ";
+                $table = mysqli_query($con,$sqlquery) or die(mysqli_error($this->db_link));
+                //Adds the query to a variable $table
                 
+            while($row = mysqli_fetch_array($table))
+            {
+            
+                $name = $row['Name'] ;
+                $instr = $row['Instructions'] ;
+                $ingr = $row['Ingredients'];
+                $image = $row['Image'] ;
+                $type = $row['Type'] ;              
+              //retrieves the variables of the query in 
             }
-            echo " 
-            <div class='outerBox'>
-            <div class = 'IngredientsBox'>
-            <p class ='Heading1'>Ingredients:</p>
-            </div>
-
-            <div class = 'InstructionsBox'>
-            <p class ='Heading1'>Instructions:</p>
-            </div>
-
-            </div>
-            ";
+            $instr2=nl2br($instr);
+            $ingr2=nl2br($ingr);
+             //below it displays the comntents of the query in a stylized manner
+             echo " 
+             <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
+             <p class ='Heading1'>$name Recipe:</p>
+             <img id='recipeInstructionsLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'>
+             </div>
+             <div class='outerBox'>
+             <div class = 'IngredientsBox'>
+             <p class ='Heading1'>Ingredients:</p>
+             <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
+             </div>
+ 
+             <div class = 'InstructionsBox'>
+             <p class ='Heading1'>Instructions:</p>
+             <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
+             </div>
+ 
+             </div>
+             
+             ";
+        }
+       
         ?>
             
         </div>

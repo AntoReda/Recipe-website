@@ -18,7 +18,11 @@
 font-size: xx-large;
 padding: 1vw;
 }
-
+.Heading2{
+    font-size: x-large;
+    padding: 1vw;
+    width:80vw;
+}
 .displayChange{
 
 margin:1vw;
@@ -180,7 +184,14 @@ position: relative;
 .InstructionsBox{
     position: relative;
 }
+#recipeInstructionsLogo{
+   
+    width: 16.5vw;
+    height: 12.5vw;
+    
+    border-style: groove;
 
+}
 /* AddPage CSS *********************************************************************/
 
 #recipeIngredients{
