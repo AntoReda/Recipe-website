@@ -85,25 +85,27 @@
 
 <main>
 <?php
-						$servername = "localhost"; // Replace with your server name if necessary
-                        $username = "root"; // Replace with your MySQL username
-                        $password = ""; // Replace with your MySQL password
-                        $database = "recipewebsite"; // Replace with your database name
-                        
-                        // Create a connection
-                        $con = mysqli_connect($servername, $username, $password, $database);
-						
-						// Check connection
-						if (mysqli_connect_errno())
-						{
-						echo "Failed to connect to MySQL: " . mysqli_connect_error();
-						}
+    header('Content-Type: text/html; charset=UTF-8');
+    mb_internal_encoding('UTF-8');
+    $servername = "localhost"; // Replace with your server name if necessary
+    $username = "root"; // Replace with your MySQL username
+    $password = ""; // Replace with your MySQL password
+    $database = "recipewebsite"; // Replace with your database name
+    
+    // Create a connection
+    $con = mysqli_connect($servername, $username, $password, $database);
+    
+    // Check connection
+    if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
 			
     echo "
     <div class='displayChange'>
       <p class='Heading1'>Adding Recipes</p>
             <div class='RecipeList'>
-                <form action='redirect.php' method='post' id='recipeForm' enctype='multipart/form-data'>
+                <form accept-charset='UTF-8' action='redirect.php' method='post' id='recipeForm' enctype='multipart/form-data'>
                     <label for='recipeName'>Recipe Name:</label>
                     <input type='text' id='recipeName' name='INrecipeName'required>
 

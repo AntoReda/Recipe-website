@@ -166,10 +166,7 @@
             $image = $row['Image'] ;
             $type = $row['Type'] ;
             //This $image var is stored as a BLOB in SQL database
-            echo "<form action='Recipe_Instructions.php?id=1' method='get' id='recipeForm' enctype='multipart/form-data'><div name = 'recipeBox' class = '$type' style = 'display:none;'><button type='submit' name='$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></div></form>";
-
-
-            
+            echo "<form action='Recipe_Instructions.php' method='get' id='recipeForm' enctype='multipart/form-data'><div name = 'recipeBox' class = '$type' style = 'display:none;'><button type='submit' name='submit2' value = '$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></div></form>";
             }
                 
             
