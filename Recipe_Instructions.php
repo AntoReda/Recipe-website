@@ -3,9 +3,8 @@
 <html>
 
 <head>
-    <title>Recipe Website</title>
+    <title>Recipe</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="engine.js"></script>
     <script defer src="dynamic_styles.js"></script>
     <script defer src="math.js"></script>
 </head>
@@ -15,10 +14,10 @@
 <div class="displayChange" id="title">
     <nav>
         <ul>
-            <li><a href="Recipe_HomePage.html">
+            <li><a href="Recipe_HomePage.php">
                 <image id="logo" src="Images/Logo.jpg"></image>
             </a></li>
-            <li><span class="Heading1">Recipe Website</span>
+            <li><span class="text" style="text-decoration: underline;  font-size: x-large;">Recipe Website</span>
             </li>
             <li><span class="text" style="font-size: medium; font-size: x-large;">&emsp; by Antonio Reda  &emsp;</span></li>
             <li>
@@ -44,9 +43,9 @@
 
         </ul>
     </nav>
-    
+    <div id="color-picker">
         <div id="color-hide">
-            <div style="background-color: #918e8e;; padding:5px;">
+            <div id="" style="background-color: #525252;; padding:5px;">
                 <label class="text2"> Change the color of main components
                     <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></input></div>
                 </label>
@@ -56,8 +55,7 @@
                 <label class="text2"> Change the button hover color
                     <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
                     </input>        </label>
-                    <button class="buttons">Save</button>
-            
+            </div>
         </div>
     </div>
 
@@ -67,21 +65,57 @@
 
     <!--Inside of the calculator box-->
     <div class="displayChange">
-      <p class="Heading1">Recipes</p>
-            <div class="RecipeList">
-                <form id="recipeForm">
-                    <label for="recipeName">Recipe Name:</label>
-                    <input type="text" id="recipeName" name="recipeName" required>
-                  
-                    <label for="recipeInstructions">Recipe Instructions:</label>
-                    <textarea id="recipeInstructions" name="recipeInstructions" required></textarea>
-                  
-                    <label for="recipeImage">Recipe Image:</label>
-                    <input type="file" id="recipeImage" name="recipeImage" accept="image/*" required>
-                  
-                    <input type="submit" value="Submit">
-                  </form>
-                  
+        <div class="RecipeList">
+        <?php
+
+            $servername = "localhost"; // Replace with your server name if necessary
+            $username = "root"; // Replace with your MySQL username
+            $password = ""; // Replace with your MySQL password
+            $database = "recipewebsite"; // Replace with your database name
+            
+            // Create a connection
+            $con = mysqli_connect($servername, $username, $password, $database);
+						
+            // Check connection
+            if (mysqli_connect_errno())
+            {
+            echo "Failed to connect to MySQL: " . mysqli_connect_error();
+            }
+           // $table = mysqli_query($con,"SELECT * FROM recipes WHERE ") or die(mysqli_error($this->db_link));
+           
+            $recipeId = $_GET['id'];
+            echo " $recipeId";
+           
+            if (isset($_POST['submit2'])) {
+                echo"HIIIII";
+                // $name = $_POST['INrecipeName'];
+                // $instr = $_POST['INrecipeInstructions'];
+                // $image = $_FILES['INrecipeImage']['tmp_name'];
+                // $type = $_POST['Type'];
+                // $ingr = $_POST['INrecipeIngredients'];
+                // // Read the image file
+                // $imgData = file_get_contents($image);
+            
+                // // Escape special characters in the binary data
+                // $imgData = mysqli_real_escape_string($con, $imgData);
+            
+                // $sql = "SELECT * FROM recipes WHERE Name='$name' AND Instructions = '$instr' AND Type='$type' AND Ingredients='$ingr' ";
+                // mysqli_query($con, $sql);
+                
+            }
+            echo " 
+            <div class='outerBox'>
+            <div class = 'IngredientsBox'>
+            <p class ='Heading1'>Ingredients:</p>
+            </div>
+
+            <div class = 'InstructionsBox'>
+            <p class ='Heading1'>Instructions:</p>
+            </div>
+
+            </div>
+            ";
+        ?>
             
         </div>
     </div>
