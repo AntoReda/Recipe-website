@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 
 <html>
@@ -52,7 +55,14 @@
                 <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
             </li>
             <li>
-                <button id="login" onclick="login()">Login/Signup</button>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <span class="user-info">
+                        Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
+                    </span>
+                    <a href="logout.php" class="button logout-btn">Logout</a>
+                <?php else: ?>
+                    <a id="login" href="redirect.php" class="button">Login/Signup</a>
+                <?php endif; ?>
             </li>
             <li class="dropdown">
                 <button class="button" style="width:17vw;">Themes</button>
@@ -91,6 +101,8 @@
 </div>
 
 <main>
+
+
     <div class="tab-container">
         <div class="tab">
           <input type="radio" id="tab1" name="tabs">
@@ -134,7 +146,11 @@
           </div>
         <!-- Add more tabs here if needed -->
       </div>
-
+      <?php
+if(isset($_GET['success']) && $_GET['success'] == 'added') {
+    echo '<div class="message success">Recipe added successfully!</div>';
+}
+?>
     <!--Inside of the recipe list-->
     <?php
 						$servername = "localhost"; // Replace with your server name if necessary
@@ -150,14 +166,17 @@
 						{
 						echo "Failed to connect to MySQL: " . mysqli_connect_error();
 						}
-            
-            $table = mysqli_query($con,"SELECT * FROM recipes") or die(mysqli_error($this->db_link));
+
+            // In your database query section:
+            if (isset($_SESSION['user_id'])) {
+                $user_id = $_SESSION['user_id'];
+                $table = mysqli_query($con,"SELECT * FROM recipes WHERE user_id = '$user_id'") or die(mysqli_error($con));
+            } else {
+                // If not logged in, show message or redirect
+                echo "<div class='login-message'>Please <a href='redirect.php'>login</a> to view your recipes.</div>";
+                exit();
+            }
                        
-                        
-                        
-                        
-						
-						
     echo "
     <div class='displayChange'>
       <p class='Heading1'>Recipes</p>

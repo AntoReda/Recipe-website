@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: redirect.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 
 <html>
@@ -74,7 +83,7 @@
                     <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></input></div>
                 </label>
                 <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
+                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></input></div>
                     </input>        </label>
                     <button class="buttons">Save</button>
             
@@ -105,7 +114,7 @@
     <div class='displayChange'>
       <p class='Heading1'>Adding Recipes</p>
             <div class='RecipeList'>
-                <form accept-charset='UTF-8' action='redirect.php' method='post' id='recipeForm' enctype='multipart/form-data'>
+                <form accept-charset='UTF-8' action='process_recipe.php' method='post' id='recipeForm' enctype='multipart/form-data'>
                     <label for='recipeName'>Recipe Name:</label>
                     <input type='text' id='recipeName' name='INrecipeName'required>
 
