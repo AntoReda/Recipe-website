@@ -11,7 +11,22 @@ $conn = new mysqli($servername, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    header("Location: database_error.php?error=connection");
+    exit();
+}
+
+// Check if database exists
+$db_check = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$database'");
+if ($db_check->num_rows == 0) {
+    header("Location: database_error.php?error=missing_database");
+    exit();
+}
+
+// Check if users table exists
+$table_check = $conn->query("SHOW TABLES LIKE 'users'");
+if ($table_check->num_rows == 0) {
+    header("Location: database_error.php?error=missing_table");
+    exit();
 }
 
 if (isset($_POST['login'])) {

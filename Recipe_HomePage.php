@@ -54,14 +54,14 @@ session_start();
             <li>
                 <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
             </li>
-            <li>
+            <li class="login-container">
                 <?php if(isset($_SESSION['user_id'])): ?>
                     <span class="user-info">
                         Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
                     </span>
-                    <a href="logout.php" class="button logout-btn">Logout</a>
+                    <a href="logout.php" class="logout-btn">Logout</a>
                 <?php else: ?>
-                    <a id="login" href="redirect.php" class="button">Login/Signup</a>
+                    <a id="login" href="redirect.php">Login/Signup</a>
                 <?php endif; ?>
             </li>
             <li class="dropdown">
