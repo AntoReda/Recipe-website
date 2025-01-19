@@ -23,18 +23,13 @@
     width:80vw;
 }
 .displayChange{
-
-    margin:1vw;
     border-radius: 8px;
-    border-style: outset;
+    border-style: solid;
     border-color: #313131;
-    position: relative;
 }
 #logo {
-
     width: 4.5vw;
     margin: 0;
-
 }
 
 /* CSS Reset */
@@ -50,14 +45,12 @@
     color: white;
 }
 .tab-container {
+    margin-top: 12vw ;
     display: flex;
-    margin:0;
-    margin-left: 1vw;
-    margin-top: -3.6vw;
-    position:relative;
-    z-index: 0;
+}
+#recipes-box{
+   transform: translateY(-0.5vw);
   }
-  
   
 body {
     background-color: #c0c0c0;
@@ -123,27 +116,21 @@ button:active {
 }
 /* HomePage CSS ********************************************************************/
 #recipeLogo {
-
     width: 6.5vw;
     height: 5.5vw;
     padding-bottom:0.6vw;
-
 }
 #recipeAdd{
     width: 3.8vw;
     height: 3.5vw;
 }
-.tab {
-    flex: 1;
-    border-radius: 1vw;
-  }
   
-  .tab input[type="radio"] {
+.tab input[type="radio"] {
     display: none;
   }
   
   .tab label {
-    display: inline-block;
+   
     padding: 10px 20px;
     background-color: #f2f2f2;
     cursor: pointer;
@@ -160,29 +147,24 @@ button:active {
     padding: 10px;
     background-color: #f2f2f2;
   }
-  .images{
-    width:5vw;
-    height:drop;
-  }
-  #recipes-box{
-    margin-top: 6vw;
-  }
+ 
+ 
 /* InstructionsPage CSS ************************************************************/
 .IngredientsBox{
 position: relative;
-
 }
-
+.images{
+    width:5vw;
+    height:drop;
+  }
 .InstructionsBox{
     position: relative;
 }
 #recipeInstructionsLogo{
-   
     width: 16.5vw;
     height: 12.5vw;
     
     border-style: groove;
-
 }
 /* AddPage CSS *********************************************************************/
 
@@ -200,11 +182,9 @@ position: relative;
     height: 4.5vw;
 }
 #recipeLogoBox {
-
     width: 9.5vw;
     height: 8.5vw;
     margin-top: 0vw;
-
 }
 
 
@@ -233,11 +213,9 @@ position: relative;
 ::-webkit-scrollbar-track {
     background-color: #3c3d46;
     border-radius: 25px;
-
 }
 
 ::-webkit-scrollbar-thumb {
-
     background-color: #555;
     border-radius: 10px;
     border: 1px solid #b1b1b1;
@@ -249,12 +227,10 @@ position: relative;
 
 /*CSS for Themes customization*/
 .sidebar {
-
     height: 105vh;
     position: absolute;
     top: auto;
     left: 0;
-
     margin-left: 0;
     border-style: solid;
     border-color: #3d3d3d;
@@ -304,7 +280,6 @@ position: relative;
 }
 
 li {
-
     font-size: larger;
     font-weight: 300;
     font-stretch: ultra-condensed;
@@ -344,7 +319,6 @@ li a:hover {
     margin: 10px;
     background-color: #313131;
     position: relative;
-
 }
 /* Reset default form styles */
 form {
@@ -423,7 +397,6 @@ input[type="color"] {
     background-color: #000000;
     width: 15%;
     border-radius: 50%;
-
 }
 
 /*dynamic resize for different screen sizes*/
@@ -561,7 +534,6 @@ a {
     text-decoration: none;
     position: relative;
     white-space: nowrap;
-   
 }
 
 .logout-btn:hover {
@@ -741,3 +713,4 @@ nav ul li {
     align-items: center;
     white-space: nowrap;
 }
+

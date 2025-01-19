@@ -6,6 +6,43 @@ session_start();
 <html>
 
 <head>
+    <style>
+        /* Immediate body hide */
+        body {
+            display: none;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Show body only after loading overlay is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.display = 'block';
+        });
+    </script>
     <title>Recipe Website</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="engine.js"></script>
@@ -40,6 +77,9 @@ session_start();
   }
 </script>
 <body id="background">
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
 <!--Title-->
 <div class="displayChange" id="top-bar">
     <nav>
@@ -63,6 +103,10 @@ session_start();
                 <?php else: ?>
                     <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
                 <?php endif; ?>
+            </li>
+            <li>
+                <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
+                <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
             </li>
             <li class="dropdown">
                 <button class="button">Themes</button>
@@ -92,11 +136,12 @@ session_start();
                 </label>
                 <label class="text2"> Change the button hover color
                     <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                    </input>        </label>
-                    <button class="buttons">Save</button>
-            
+                </label>
+                <label class="text2"> Change the text color
+                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
+                </label>
+            </div>
         </div>
-    </div>
 
 </div>
 
@@ -136,7 +181,6 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
             }
                        
     ?>
-    <div class='displayChange' id="recipes-box">
     <?php if(isset($_SESSION['user_id'])): ?>
         <div class="tab-container">
             <div class="tab">
@@ -181,8 +225,9 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
             </div>
         </div>
     <?php endif; ?>
-      <p class='Heading1'>Recipes</p>
-      <div class='RecipeList'>
+    <div class='displayChange' id="recipes-box">
+        <p class='Heading1'>Recipes</p>
+        <div class='RecipeList'>
 <?php
     while($row = mysqli_fetch_array($table)) {
         $name = $row['Name'];
@@ -197,14 +242,22 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
         echo "</button></form></div>";
     }
 ?>
-        <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd' src='Images/add.png'></button></a>
-      </div>
+            <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd' src='Images/add.png'></button></a>
+        </div>
     </div>
 <?php
     ?>
    
     
 </main>
+<script>
+    window.addEventListener('load', function() {
+        // Wait exactly 0.5 second before hiding the overlay
+        setTimeout(function() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }, 1000); // 200 milliseconds = 0.5 second
+    });
+</script>
 </body>
 
 </html>
