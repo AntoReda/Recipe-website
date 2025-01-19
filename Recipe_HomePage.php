@@ -6,6 +6,43 @@ session_start();
 <html>
 
 <head>
+    <style>
+        /* Immediate body hide */
+        body {
+            display: none;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Show body only after loading overlay is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.display = 'block';
+        });
+    </script>
     <title>Recipe Website</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="engine.js"></script>
@@ -40,8 +77,11 @@ session_start();
   }
 </script>
 <body id="background">
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
 <!--Title-->
-<div class="displayChange" id="title">
+<div class="displayChange" id="top-bar">
     <nav>
         <ul>
             <li>
@@ -50,7 +90,7 @@ session_start();
            </li>
             <li><span class="Heading1">Recipe Website</span>
             </li>
-            <li><span class="text" style="font-size: medium; font-size: x-large;">&emsp; by Antonio Reda  &emsp;</span></li>
+            <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
             <li>
                 <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
             </li>
@@ -59,13 +99,17 @@ session_start();
                     <span class="user-info">
                         Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
                     </span>
-                    <a href="logout.php" class="logout-btn">Logout</a>
+                    <button class="buttons" onclick="window.location.href='logout.php'" id="logout-btn">Logout</button>
                 <?php else: ?>
-                    <a id="login" href="redirect.php">Login/Signup</a>
+                    <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
                 <?php endif; ?>
             </li>
+            <li>
+                <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
+                <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
+            </li>
             <li class="dropdown">
-                <button class="button" style="width:17vw;">Themes</button>
+                <button class="button">Themes</button>
                 <div class="dropdown-content" id="sidebar">
                     <a href="#" onclick="styleHome()" class="text">Home</a>
                     <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
@@ -92,61 +136,20 @@ session_start();
                 </label>
                 <label class="text2"> Change the button hover color
                     <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                    </input>        </label>
-                    <button class="buttons">Save</button>
-            
+                </label>
+                <label class="text2"> Change the text color
+                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
+                </label>
+            </div>
         </div>
-    </div>
 
 </div>
 
 <main>
 
 
-    <div class="tab-container">
-        <div class="tab">
-          <input type="radio" id="tab1" name="tabs">
-          <label for="tab1" onclick="showAll()">ALL</label>
-        </div>
-        <div class="tab">
-          <input type="radio" id="tab2" name="tabs">
-          <label for="tab2" onclick="show('meats')">Meats</label>
-        </div>
-        <div class="tab">
-            <input type="radio" id="tab3" name="tabs">
-            <label for="tab3" onclick="show('fish')">Fish</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab4" name="tabs">
-            <label for="tab4" onclick="show('veggies')">Veggies</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab5" name="tabs">
-            <label for="tab5" onclick="show('pastas')">Pasta</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab6" name="tabs">
-            <label for="tab6"onclick="show('sandwiches')">Sandwich</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab7" name="tabs">
-            <label for="tab7" onclick="show('soups')">Soups</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab8" name="tabs">
-            <label for="tab8" onclick="show('desserts')">Desserts</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab9" name="tabs">
-            <label for="tab9" onclick="show('others')">Other</label>
-          </div>
-          <div class="tab">
-            <input type="radio" id="tab10" name="tabs">
-            <label for="tab9" onclick="show('fav')">Favourites</label>
-          </div>
-        <!-- Add more tabs here if needed -->
-      </div>
-      <?php
+    
+    <?php
 if(isset($_GET['success']) && $_GET['success'] == 'added') {
     echo '<div class="message success">Recipe added successfully!</div>';
 }
@@ -177,29 +180,84 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
                 exit();
             }
                        
-    echo "
-    <div class='displayChange'>
-      <p class='Heading1'>Recipes</p>
-            <div class='RecipeList'>";
-            while($row = mysqli_fetch_array($table))
-            {
-            
-            $name = $row['Name'] ;
-            $instr = $row['Instructions'] ;
-            $image = $row['Image'] ;
-            $type = $row['Type'] ;
-            //This $image var is stored as a BLOB in SQL database
-            echo "<div name = 'recipeBox' class = '$type' style = 'display:none;'><form action='Recipe_Instructions.php' method='get' id='recipeForm' enctype='multipart/form-data'><button type='submit' name='submit2' value = '$name' id='recipeLogoBox'><img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name </button></form></div>";
-            }
-                
-            
-       echo "  <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd'src='Images/add.png'></button></a>
-       </div>
-    </div>";
+    ?>
+    <?php if(isset($_SESSION['user_id'])): ?>
+        <div class="tab-container">
+            <div class="tab">
+                <input type="radio" id="tab1" name="tabs">
+                <label for="tab1" onclick="showAll()">ALL</label>
+            </div>
+            <div class="tab">
+              <input type="radio" id="tab2" name="tabs">
+              <label for="tab2" onclick="show('meats')">Meats</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab3" name="tabs">
+                <label for="tab3" onclick="show('fish')">Fish</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab4" name="tabs">
+                <label for="tab4" onclick="show('veggies')">Veggies</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab5" name="tabs">
+                <label for="tab5" onclick="show('pastas')">Pasta</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab6" name="tabs">
+                <label for="tab6"onclick="show('sandwiches')">Sandwich</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab7" name="tabs">
+                <label for="tab7" onclick="show('soups')">Soups</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab8" name="tabs">
+                <label for="tab8" onclick="show('desserts')">Desserts</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab9" name="tabs">
+                <label for="tab9" onclick="show('others')">Other</label>
+            </div>
+            <div class="tab">
+                <input type="radio" id="tab10" name="tabs">
+                <label for="tab9" onclick="show('fav')">Favourites</label>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class='displayChange' id="recipes-box">
+        <p class='Heading1'>Recipes</p>
+        <div class='RecipeList'>
+<?php
+    while($row = mysqli_fetch_array($table)) {
+        $name = $row['Name'];
+        $instr = $row['Instructions'];
+        $image = $row['Image'];
+        $type = $row['Type'];
+        
+        echo "<div name='recipeBox' class='$type' style='display:none;'>";
+        echo "<form action='Recipe_Instructions.php' method='get' id='recipeForm' enctype='multipart/form-data'>";
+        echo "<button type='submit' name='submit2' value='$name' id='recipeLogoBox'>";
+        echo "<img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name ";
+        echo "</button></form></div>";
+    }
+?>
+            <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd' src='Images/add.png'></button></a>
+        </div>
+    </div>
+<?php
     ?>
    
     
 </main>
+<script>
+    window.addEventListener('load', function() {
+        // Wait exactly 0.5 second before hiding the overlay
+        setTimeout(function() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }, 1000); // 200 milliseconds = 0.5 second
+    });
+</script>
 </body>
 
 </html>
