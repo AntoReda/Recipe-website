@@ -3,6 +3,7 @@ function colorPicker () {
   const colorPicker = document.querySelectorAll('[id=color-picker1]')
   const colorPicker2 = document.querySelectorAll('[id=color-picker2]')
   const colorPicker3 = document.querySelectorAll('[id=color-picker3]')
+  const colorPicker4 = document.querySelectorAll('[id=color-picker4]')
   const colorHide = document.querySelectorAll('[id=color-hide]')
 
   for (var i = 0; i < colorPicker.length; i++) {
@@ -10,11 +11,13 @@ function colorPicker () {
       colorPicker[i].style.display = 'block'
       colorPicker2[i].style.display = 'block'
       colorPicker3[i].style.display = 'block'
+      colorPicker4[i].style.display = 'block'
       colorHide[i].style.display = 'block'
     } else {
       colorPicker[i].style.display = 'none'
       colorPicker2[i].style.display = 'none'
       colorPicker3[i].style.display = 'none'
+      colorPicker4[i].style.display = 'none'
       colorHide[i].style.display = 'none'
     }
   }
@@ -26,6 +29,7 @@ function handleColorPicker () {
   var selectedColor2
   var selectedColor3
   var selectedColor4
+  var picture = document.getElementById('background')
   const colorPicker1 = document.querySelector('#color-picker1')
   const colorPicker2 = document.querySelector('#color-picker2')
   const colorPicker3 = document.querySelector('#color-picker3')
@@ -38,27 +42,27 @@ function handleColorPicker () {
   colorPicker1.addEventListener('input', () => {
     colorPickerBox1.style.backgroundColor = colorPicker1.value
     selectedColor1 = colorPicker1.value
-    style(selectedColor1, selectedColor2, selectedColor3, 'url(\'Images/Logo.jpg\')', 'White', selectedColor4)
+    style(selectedColor1, selectedColor2, selectedColor3, picture, 'White', selectedColor4)
   })
   colorPicker2.addEventListener('input', () => {
     colorPickerBox2.style.backgroundColor = colorPicker2.value
     selectedColor2 = colorPicker2.value
-    style(selectedColor1, selectedColor2, selectedColor3, 'url(\'Images/Logo.jpg\')', 'White', selectedColor4)
+    style(selectedColor1, selectedColor2, selectedColor3, picture, 'White', selectedColor4)
   })
   colorPicker3.addEventListener('input', () => {
     colorPickerBox3.style.backgroundColor = colorPicker3.value
     selectedColor3 = colorPicker3.value
-    style(selectedColor1, selectedColor2, selectedColor3, 'url(\'Images/Logo.jpg\')', 'White', selectedColor4)
+    style(selectedColor1, selectedColor2, selectedColor3, picture, 'White', selectedColor4)
   })
   colorPicker4.addEventListener('input', () => {
     colorPickerBox4.style.backgroundColor = colorPicker4.value
     selectedColor4 = colorPicker4.value
     // Update all text elements with the new color
-    const textElements = document.querySelectorAll('.text, .text2, .login-container, .change-text, .buttons, .user-info, nav ul li a, .dropdown-content a')
+    const textElements = document.querySelectorAll('.text, .text2, .login-container, .change-text, .buttons, .button, button, .user-info, nav ul li a, .dropdown-content a')
     textElements.forEach(element => {
       element.style.color = selectedColor4
     })
-    style(selectedColor1, selectedColor2, selectedColor3, 'url(\'Images/Logo.jpg\')', 'White', selectedColor4)
+    style(selectedColor1, selectedColor2, selectedColor3, picture, 'White', selectedColor4)
   })
 }
 
@@ -211,40 +215,99 @@ function saveStylePreferences() {
     alert('Style preferences saved!');
 }
 
-window.onload = function() {
-    // Load saved preferences
+function applyGlobalStyles() {
     const savedPrefs = localStorage.getItem('stylePreferences');
     
     if (savedPrefs) {
         const prefs = JSON.parse(savedPrefs);
         
-        // Update color pickers
-        document.getElementById('color-picker1').value = prefs.mainColor;
-        document.getElementById('color-picker2').value = prefs.buttonColor;
-        document.getElementById('color-picker3').value = prefs.buttonHoverColor;
-        document.getElementById('color-picker4').value = prefs.textColor;
+        // Apply background first
+        document.getElementById('background').style.backgroundImage = prefs.backgroundUrl;
         
-        // Update color picker boxes
-        document.getElementById('color-box1').style.backgroundColor = prefs.mainColor;
-        document.getElementById('color-box2').style.backgroundColor = prefs.buttonColor;
-        document.getElementById('color-box3').style.backgroundColor = prefs.buttonHoverColor;
-        document.getElementById('color-box4').style.backgroundColor = prefs.textColor;
-        
-        // Apply all saved styles including text color
+        // Apply all saved styles
         style(
             prefs.mainColor,
             prefs.buttonColor,
             prefs.buttonHoverColor,
             prefs.backgroundUrl,
             prefs.buttonText,
-            prefs.textColor,  // This will now be applied to all text elements
+            prefs.textColor,
             prefs.equalsColor,
             prefs.linkColor,
             prefs.linkHover
         );
-    } else {
-        // If no preferences, load default home theme
-        styleHome();
+        
+        // Update text colors
+        document.querySelectorAll('.text, .text2, nav ul li a, .dropdown-content a')
+            .forEach(element => element.style.color = prefs.textColor);
+            
+        // Set theme attribute
+        if (prefs.currentTheme) {
+            document.body.setAttribute('data-theme', prefs.currentTheme);
+        }
+        
+        // Update color pickers if they exist on this page
+        const colorPickers = {
+            'color-picker1': prefs.mainColor,
+            'color-picker2': prefs.buttonColor,
+            'color-picker3': prefs.buttonHoverColor,
+            'color-picker4': prefs.textColor
+        };
+        
+        Object.entries(colorPickers).forEach(([id, color]) => {
+            const picker = document.getElementById(id);
+            if (picker) {
+                picker.value = color;
+                const boxId = id.replace('picker', 'box');
+                const box = document.getElementById(boxId);
+                if (box) box.style.backgroundColor = color;
+            }
+        });
     }
+
+    // Show the body after styles are applied
+    document.body.style.display = 'block';
+}
+
+window.onload = function() {
+    applyGlobalStyles();
+    
+    // Only initialize color pickers if we're on the homepage
+    if (document.querySelector('#color-picker1')) {
+        handleColorPicker();
+    }
+
+    // Clear overlay if page is being unloaded
+    window.onbeforeunload = function() {
+        clearLoadingOverlay();
+    };
+}
+
+// Add this function
+function clearLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+// Update handleLogout to ensure overlay is cleared before redirect
+function handleLogout() {
+    // Show the loading overlay
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex'; // Ensure it's visible
+    }
+
+    // Clear any pending timeouts
+    const timeouts = setTimeout(() => {}, 0);
+    for (let i = 0; i <= timeouts; i++) {
+        clearTimeout(i);
+    }
+
+    // Redirect immediately after showing the overlay
+    window.location.href = 'logout.php';
+
+    return false; // Prevent the onclick from executing its second command
 }
 
