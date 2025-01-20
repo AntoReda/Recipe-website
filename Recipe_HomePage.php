@@ -6,48 +6,17 @@ session_start();
 <html>
 
 <head>
-    <style>
-        /* Immediate body hide */
-        body {
-            display: none;
-        }
-        
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-    <script>
-        // Show body only after loading overlay is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.style.display = 'block';
-        });
-    </script>
+   
     <title>Recipe Website</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="engine.js"></script>
     <script defer src="dynamic_styles.js"></script>
     <script defer src="math.js"></script>
+    <style>
+        body {
+            display: none;
+        }
+    </style>
 </head>
 <script>
 
@@ -92,14 +61,14 @@ session_start();
             </li>
             <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
             <li>
-                <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
+                <button  class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
             </li>
             <li class="login-container">
                 <?php if(isset($_SESSION['user_id'])): ?>
                     <span class="user-info">
                         Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
                     </span>
-                    <button class="buttons" onclick="window.location.href='logout.php'" id="logout-btn">Logout</button>
+                    <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
                 <?php else: ?>
                     <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
                 <?php endif; ?>
@@ -156,7 +125,7 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
 ?>
     <!--Inside of the recipe list-->
     <?php
-						$servername = "localhost"; // Replace with your server name if necessary
+			$servername = "localhost"; // Replace with your server name if necessary
             $username = "root"; // Replace with your MySQL username
             $password = ""; // Replace with your MySQL password
             $database = "recipewebsite"; // Replace with your database name
@@ -250,14 +219,6 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
    
     
 </main>
-<script>
-    window.addEventListener('load', function() {
-        // Wait exactly 0.5 second before hiding the overlay
-        setTimeout(function() {
-            document.getElementById('loading-overlay').style.display = 'none';
-        }, 1000); // 200 milliseconds = 0.5 second
-    });
-</script>
 </body>
 
 </html>
