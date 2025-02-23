@@ -143,7 +143,7 @@ function styleHome () {
 }
 
 function styleSalmon () {
-  style('#F2Be9C', '#F5E7B2', '#A07340', 'url(\'Images/salmon.png\')', 'White', 'Black', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
+  style('#F2Be9C', '#F5E7B2', '#A07340', 'url(\'Images/salmon.png\')', 'White', 'White', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
 }
 
 function styleVeggies () {
@@ -151,11 +151,11 @@ function styleVeggies () {
 }
 
 function styleCloud () {
-  style('#FFF4D2', '#E3DFFD', '#E5D1FA', 'url(\'Images/Cloud.gif\')', 'Black', 'Black', 'rgb(124, 203, 255)', 'dimgray', 'rgb(124, 203, 255)')
+  style('#FFF4D2', '#E3DFFD', '#E5D1FA', 'url(\'Images/Cloud.gif\')', 'White', 'White', 'rgb(124, 203, 255)', 'dimgray', 'rgb(124, 203, 255)')
 }
 
 function styleRed () {
-  style('#862137', '#ed8c5d', '#393053', 'url(\'Images/red-forest.gif\')', 'White', 'Black', 'rgb(66, 63, 62)', 'black', '#393053')
+  style('#862137', '#ed8c5d', '#393053', 'url(\'Images/red-forest.gif\')', 'White', 'White', 'rgb(66, 63, 62)', 'black', '#393053')
 }
 
 function styleCave () {
@@ -163,11 +163,11 @@ function styleCave () {
 }
 
 function styleDesert () {
-  style('#de7330', '#873924', '#F2DEBA', 'url(\'Images/Desert.gif\')', 'White', 'Black', 'rgb(191, 59, 59)', '#873924', 'rgb(191, 59, 59)')
+  style('#de7330', '#873924', '#F2DEBA', 'url(\'Images/Desert.gif\')', 'White', 'White', 'rgb(191, 59, 59)', '#873924', 'rgb(191, 59, 59)')
 }
 
 function styleCube () {
-  style('#f49db0', '#4f544e', '#777f75', 'url(\'Images/Cube.gif\')', 'White', 'Black', 'rgb(227, 75, 84)', '#4f544e', 'rgb(227, 75, 84)')
+  style('#f49db0', '#4f544e', '#777f75', 'url(\'Images/Cube.gif\')', 'White', 'White', 'rgb(227, 75, 84)', '#4f544e', 'rgb(227, 75, 84)')
 }
 
 function styleDark () {
