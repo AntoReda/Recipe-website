@@ -199,15 +199,20 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
         <div class='RecipeList'>
 <?php
     while($row = mysqli_fetch_array($table)) {
-        $name = $row['Name'];
-        $instr = $row['Instructions'];
-        $image = $row['Image'];
-        $type = $row['Type'];
+        $name = htmlspecialchars($row['Name']);
+        $type = htmlspecialchars($row['Type']);
+        $recipe_id = $row['recipe_id'];
         
         echo "<div name='recipeBox' class='$type' style='display:none;'>";
-        echo "<form action='Recipe_Instructions.php' method='get' id='recipeForm' enctype='multipart/form-data'>";
+        echo "<form action='Recipe_Instructions.php' method='get' id='recipeForm'>";
+        echo "<input type='hidden' name='id' value='$recipe_id'>";
         echo "<button type='submit' name='submit2' value='$name' id='recipeLogoBox'>";
-        echo "<img id='recipeLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'> $name ";
+        echo "<img id='recipeLogo' 
+                 src='data:image/jpeg;base64," . base64_encode($row['Image']) . "' 
+                 alt='$name'
+                 loading='lazy'
+                 onerror=\"this.src='Images/default-recipe.jpg';\">";
+        echo htmlspecialchars($name);
         echo "</button></form></div>";
     }
 ?>

@@ -43,26 +43,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Handle image upload
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        // Read the image file content
-        $imageData = file_get_contents($_FILES['image']['tmp_name']);
-        
-        // Store the image data directly in the database
-        $image = $imageData;
-        echo "<p class='success'>Image uploaded successfully!</p>";
+        // Simple file upload
+        $image = file_get_contents($_FILES['image']['tmp_name']);
     } else {
         $image = $recipe['Image']; // Keep existing image if no new one is uploaded
     }
 
-    // Update the query to use prepared statements for security
+    // Update the query using prepared statements
     $stmt = $con->prepare("UPDATE recipes SET Name = ?, Instructions = ?, Ingredients = ?, Image = ? WHERE Name = ? AND recipe_id = ?");
     $stmt->bind_param("sssssi", $name, $instructions, $ingredients, $image, $recipe_name, $recipe_id);
 
     // Execute the query
-    $stmt->execute();
-
-    // Redirect with both identifiers
-    header("Location: Recipe_Instructions.php?submit2=$name&id=$recipe_id");
-    exit();
+    if ($stmt->execute()) {
+        // Redirect with both identifiers
+        header("Location: Recipe_Instructions.php?submit2=$name&id=$recipe_id");
+        exit();
+    } else {
+        echo "Error updating recipe: " . $stmt->error;
+    }
 }
 ?>
 
@@ -71,23 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title>Edit Recipe</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .current-image {
-            margin: 10px 0;
-        }
-        .current-image img {
-            display: block;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            padding: 5px;
-        }
-        .success {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
-    </style>
 </head>
 <body>
     <h1>Edit Recipe</h1>
@@ -103,11 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <textarea id="instructions" name="instructions" required><?php echo htmlspecialchars($recipe['Instructions']); ?></textarea>
 
         <label for="image">Image:</label>
-       
+        <input type="file" id="image" name="image" accept="image/*">
         <?php if ($recipe['Image']): ?>
             <div class="current-image">
                 <p>Current image:</p>
-                <input type="file" id="image" name="image" accept="image/*">
                 <img src="data:image/jpeg;base64,<?php echo base64_encode($recipe['Image']); ?>" alt="Current recipe image" style="max-width: 200px;">
             </div>
         <?php endif; ?>

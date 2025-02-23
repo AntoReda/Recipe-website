@@ -152,7 +152,11 @@
                 <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
                 <button class='text' onclick='window.location.href=\"edit_recipe.php?Name=$name&id=$recipe_id\"'>Edit Recipe</button>
                 <p class ='Heading1'>$name Recipe:</p>
-                <img id='recipeInstructionsLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'>
+                <img id='recipeInstructionsLogo' 
+                     src='data:image/jpeg;base64," . base64_encode($image) . "' 
+                     alt='Recipe Image'
+                     loading='lazy'
+                     onerror=\"this.src='Images/default-recipe.jpg';\">
                 </div>
                 <div class='outerBox'>
                 <div class = 'IngredientsBox'>
