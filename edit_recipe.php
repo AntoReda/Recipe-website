@@ -40,10 +40,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $instructions = $_POST['instructions'];
     $ingredients = $_POST['ingredients'];
+    
+    // Handle image upload
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        // Read the image file content
+        $imageData = file_get_contents($_FILES['image']['tmp_name']);
+        
+        // Store the image data directly in the database
+        $image = $imageData;
+        echo "<p class='success'>Image uploaded successfully!</p>";
+    } else {
+        $image = $recipe['Image']; // Keep existing image if no new one is uploaded
+    }
 
-    // Update the recipe in the database using both identifiers
-    $update_query = "UPDATE recipes SET Name = '$name', Instructions = '$instructions', Ingredients = '$ingredients' WHERE Name = '$recipe_name' AND recipe_id = $recipe_id";
-    mysqli_query($con, $update_query);
+    // Update the query to use prepared statements for security
+    $stmt = $con->prepare("UPDATE recipes SET Name = ?, Instructions = ?, Ingredients = ?, Image = ? WHERE Name = ? AND recipe_id = ?");
+    $stmt->bind_param("sssssi", $name, $instructions, $ingredients, $image, $recipe_name, $recipe_id);
+
+    // Execute the query
+    $stmt->execute();
 
     // Redirect with both identifiers
     header("Location: Recipe_Instructions.php?submit2=$name&id=$recipe_id");
@@ -56,11 +71,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <title>Edit Recipe</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .current-image {
+            margin: 10px 0;
+        }
+        .current-image img {
+            display: block;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Edit Recipe</h1>
     <?php if ($recipe): ?>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <label for="name">Recipe Name:</label>
         <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($recipe['Name']); ?>" required>
 
@@ -69,6 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <label for="instructions">Instructions:</label>
         <textarea id="instructions" name="instructions" required><?php echo htmlspecialchars($recipe['Instructions']); ?></textarea>
+
+        <label for="image">Image:</label>
+       
+        <?php if ($recipe['Image']): ?>
+            <div class="current-image">
+                <p>Current image:</p>
+                <input type="file" id="image" name="image" accept="image/*">
+                <img src="data:image/jpeg;base64,<?php echo base64_encode($recipe['Image']); ?>" alt="Current recipe image" style="max-width: 200px;">
+            </div>
+        <?php endif; ?>
 
         <button type="submit" class="buttons">Save Changes</button>
     </form>
