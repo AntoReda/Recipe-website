@@ -8,145 +8,133 @@ if (!isset($_SESSION['user_id'])) {
 }
 ?>
 <!DOCTYPE html>
-
 <html>
-
 <head>
-    <title>Recipe Website</title>
+    <title>Add Recipe</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="dynamic_styles.js"></script>
-   
+    <script>
+        // Apply saved styles immediately to prevent flash
+        const savedPrefs = localStorage.getItem('stylePreferences');
+        if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs);
+            document.documentElement.style.setProperty('--main-color', prefs.mainColor);
+            document.documentElement.style.setProperty('--button-color', prefs.buttonColor);
+            document.documentElement.style.setProperty('--text-color', prefs.textColor);
+            document.documentElement.style.setProperty('--background-url', prefs.backgroundUrl);
+        }
+
+        function handleKeyPress(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                var textarea = event.target;
+                var currentText = textarea.value;
+                var cursorPosition = textarea.selectionStart;
+                var updatedText = currentText.slice(0, cursorPosition) + '\n• ' + currentText.slice(cursorPosition);
+                textarea.value = updatedText;
+                textarea.selectionStart = textarea.selectionEnd = cursorPosition + 2;
+                textarea.dispatchEvent(new Event('input'));
+            }
+        }
+    </script>
 </head>
-<script>
-    function handleKeyPress(event) {
-      if (event.keyCode === 13) { // Check if Enter key is pressed
-        event.preventDefault(); // Prevent the default behavior of the Enter key
-
-        var textarea = event.target;
-        var currentText = textarea.value;
-        var cursorPosition = textarea.selectionStart;
-
-        // Insert bullet point and newline at the cursor position
-        var updatedText = currentText.slice(0, cursorPosition) + '\n• ' + currentText.slice(cursorPosition);
-
-        textarea.value = updatedText;
-        
-        // Move the cursor position after the inserted bullet point
-        textarea.selectionStart = textarea.selectionEnd = cursorPosition + 2;
-        
-        // Trigger the input event to update the textarea's content and height
-        textarea.dispatchEvent(new Event('input'));
-      }
-    }
-  </script>
 <body id="background">
-<!--Title-->
-<div class="displayChange" id="title">
-    <nav>
-        <ul>
-            <li><a href="Recipe_HomePage.php">
-                <image id="logo" src="Images/Logo.jpg"></image>
-            </a></li>
-            <li><span class="Heading1">Recipe Website</span>
-            </li>
-            <li><span class="text" style="font-size: medium; font-size: x-large;">&emsp; by Antonio Reda  &emsp;</span></li>
-            <li>
-                <button id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
-            </li>
-            <li>
-                <button id="login" onclick="login()">Login/Signup</button>
-            </li>
-            <li class="dropdown">
-                <button class="button" style="width:17vw;">Themes</button>
-                <div class="dropdown-content" id="sidebar">
-                    <a href="#" onclick="styleHome()" class="text">Home</a>
-                    <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
-                    <a href="#" onclick="stylePink()" class="text">Bubble Gum</a>
-                    <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
-                    <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
-                    <a href="#" onclick="styleCave()" class="text">Seaside City</a>
-                    <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
-                    <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
-                    <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
-                </div>
-            </li>
+    <!--Title-->
+    <div class="displayChange" id="top-bar">
+        <nav>
+            <ul>
+                <li>
+                    <a href="Recipe_HomePage.php">
+                        <image id="logo" src="Images/Logo.jpg"></image>
+                    </a>
+                </li>
+                <li><span class="Heading1">Recipe Website</span></li>
+                <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
+                <li>
+                    <button class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
+                </li>
+                <li class="login-container">
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                        <span class="user-info">
+                            Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
+                        </span>
+                        <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
+                    <?php else: ?>
+                        <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
+                    <?php endif; ?>
+                </li>
+                <li>
+                    <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
+                    <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
+                </li>
+                <li class="dropdown">
+                    <button class="button">Themes</button>
+                    <div class="dropdown-content" id="sidebar">
+                        <a href="#" onclick="styleHome()" class="text">Home</a>
+                        <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
+                        <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
+                        <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
+                        <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
+                        <a href="#" onclick="styleCave()" class="text">Seaside City</a>
+                        <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
+                        <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
+                        <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
 
-        </ul>
-    </nav>
-    
         <div id="color-hide">
-            <div style="background-color: #918e8e;; padding:5px;">
+            <div style="background-color: #525252; padding:5px;">
                 <label class="text2"> Change the color of main components
-                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></input></div>
+                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></div>
                 </label>
                 <label class="text2"> Change the button color
-                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></input></div>
+                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></div>
                 </label>
                 <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></input></div>
-                    </input>        </label>
-                    <button class="buttons">Save</button>
-            
+                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
+                </label>
+                <label class="text2"> Change the text color
+                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
+                </label>
+            </div>
         </div>
     </div>
 
-</div>
-
-<main>
-<?php
-    header('Content-Type: text/html; charset=UTF-8');
-    mb_internal_encoding('UTF-8');
-    $servername = "localhost"; // Replace with your server name if necessary
-    $username = "root"; // Replace with your MySQL username
-    $password = ""; // Replace with your MySQL password
-    $database = "recipewebsite"; // Replace with your database name
-    
-    // Create a connection
-    $con = mysqli_connect($servername, $username, $password, $database);
-    
-    // Check connection
-    if (mysqli_connect_errno())
-    {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-    }
-			
-    echo "
-    <div class='displayChange'>
-      <p class='Heading1'>Adding Recipes</p>
+    <main>
+        <div class='displayChange'>
+            <p class='Heading1'>Adding Recipes</p>
             <div class='RecipeList'>
                 <form accept-charset='UTF-8' action='process_recipe.php' method='post' id='recipeForm' enctype='multipart/form-data'>
                     <label for='recipeName'>Recipe Name:</label>
-                    <input type='text' id='recipeName' name='INrecipeName'required>
+                    <input type='text' id='recipeName' name='INrecipeName' required>
 
-                    <label for='recipeIngredients'>Recipe Ingredients:<img src = 'Images/Ingredients.png' class = 'images'></label>
-                   <textarea onkeydown='handleKeyPress(event)' id='recipeIngredients' name='INrecipeIngredients' required></textarea>
-                  
-                    <label for='recipeInstructions'>Recipe Instructions:<img src = 'Images/Instructions.png' class = 'images'></label>
+                    <label for='recipeIngredients'>Recipe Ingredients:<img src='Images/Ingredients.png' class='images'></label>
+                    <textarea onkeydown='handleKeyPress(event)' id='recipeIngredients' name='INrecipeIngredients' required></textarea>
+
+                    <label for='recipeInstructions'>Recipe Instructions:<img src='Images/Instructions.png' class='images'></label>
                     <textarea onkeydown='handleKeyPress(event)' id='recipeInstructions' name='INrecipeInstructions' required></textarea>
-                  
+
                     <label for='recipeImage'>Recipe Image:</label>
-                    <input type='file' id='recipeImage' name='INrecipeImage' accept='image' required>
-                    <form action='process_form.php' method='POST'>
+                    <input type='file' id='recipeImage' name='INrecipeImage' accept='image/*' required>
+
                     <label for='dropdown'>Pick a food category:</label>
                     <select id='dropdown' name='Type'>
-                      <option value='meats'>Meat</option>
-                      <option value='fish'>Fish</option>
-                      <option value='veggies'>Veggie</option>
-                      <option value='pastas'>Pasta</option>
-                      <option value='sandwiches'>Sandwhich</option>
-                      <option value='soups'>Soups</option>
-                      <option value='desserts'>Desserts</option>
-                      <option value='others'>Other</option>
+                        <option value='meats'>Meat</option>
+                        <option value='fish'>Fish</option>
+                        <option value='veggies'>Veggie</option>
+                        <option value='pastas'>Pasta</option>
+                        <option value='sandwiches'>Sandwich</option>
+                        <option value='soups'>Soups</option>
+                        <option value='desserts'>Desserts</option>
+                        <option value='others'>Other</option>
                     </select>
-                   
-                    <input type='submit' value='Submit' name='submit'>
-                  </form>
-                
-            
-        </div>
-    </div>";
-    ?>
-</main>
-</body>
 
+                    <button type="submit" name="submit" class="buttons">Submit Recipe</button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
 </html>

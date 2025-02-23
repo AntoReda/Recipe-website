@@ -336,7 +336,7 @@ form {
   }
   
   /* Style form inputs and textarea */
-  input[type="text"],
+  input[type="text"], input[type="password"], input[type="email"],
   textarea {
     width: 100%;
     padding: 10px;
