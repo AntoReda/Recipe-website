@@ -30,6 +30,28 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .buttons {
+            background-color: var(--button-color, #918e8e);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;  /* Ensures button is visible as a block element */
+            clear: both;     /* Clears any floats */
+            position: relative; /* Ensures proper stacking */
+            z-index: 1;      /* Ensures button is above other elements */
+        }
+
+        .buttons:hover {
+            background-color: var(--button-hover-color, #798177);
+        }
+
+        /* Adjust outer container to accommodate button */
+        .outerBox {
+            margin-bottom: 60px; /* Makes space for the button */
+        }
     </style>
     <script defer src="dynamic_styles.js"></script>
     <script defer src="math.js"></script>
@@ -108,8 +130,8 @@
                
                
                 if (isset($_GET['submit2'])) {
-                    $recipeId = $_GET['submit2'];
-                    $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeId' ";
+                    $recipeName = $_GET['submit2'];
+                    $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeName' ";
                     $table = mysqli_query($con,$sqlquery) or die(mysqli_error($this->db_link));
                     //Adds the query to a variable $table
                     
@@ -120,31 +142,31 @@
                     $instr = $row['Instructions'] ;
                     $ingr = $row['Ingredients'];
                     $image = $row['Image'] ;
-                    $type = $row['Type'] ;              
-                  //retrieves the variables of the query in 
+                    $type = $row['Type'] ;
+                    $recipe_id = $row['recipe_id'];
                 }
                 $instr2=nl2br($instr);
                 $ingr2=nl2br($ingr);
-                 //below it displays the comntents of the query in a stylized manner
-                 echo " 
-                 <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
-                 <p class ='Heading1'>$name Recipe:</p>
-                 <img id='recipeInstructionsLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'>
-                 </div>
-                 <div class='outerBox'>
-                 <div class = 'IngredientsBox'>
-                 <p class ='Heading1'>Ingredients:</p>
-                 <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
-                 </div>
-      
-                 <div class = 'InstructionsBox'>
-                 <p class ='Heading1'>Instructions:</p>
-                 <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
-                 </div>
-      
-                 </div>
-                 
-                 ";
+                //below it displays the contents of the query in a stylized manner
+                echo " 
+                <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
+                <button class='text' onclick='window.location.href=\"edit_recipe.php?Name=$name&id=$recipe_id\"'>Edit Recipe</button>
+                <p class ='Heading1'>$name Recipe:</p>
+                <img id='recipeInstructionsLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'>
+                </div>
+                <div class='outerBox'>
+                <div class = 'IngredientsBox'>
+                <p class ='Heading1'>Ingredients:</p>
+                <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
+                </div>
+    
+                <div class = 'InstructionsBox'>
+                <p class ='Heading1'>Instructions:</p>
+                <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
+                </div>
+                
+                </div>
+                ";
             }
            
             ?>
