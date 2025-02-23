@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: redirect.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 
 <html>
@@ -30,6 +39,28 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .buttons {
+            background-color: var(--button-color, #918e8e);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;  /* Ensures button is visible as a block element */
+            clear: both;     /* Clears any floats */
+            position: relative; /* Ensures proper stacking */
+            z-index: 1;      /* Ensures button is above other elements */
+        }
+
+        .buttons:hover {
+            background-color: var(--button-hover-color, #798177);
+        }
+
+        /* Adjust outer container to accommodate button */
+        .outerBox {
+            margin-bottom: 60px; /* Makes space for the button */
+        }
     </style>
     <script defer src="dynamic_styles.js"></script>
     <script defer src="math.js"></script>
@@ -53,34 +84,66 @@
     </div>
 
     <!--Title-->
-    <div class="displayChange" id="title">
+    <div class="displayChange" id="top-bar">
         <nav>
             <ul>
-                <li><a href="Recipe_HomePage.php">
-                    <image id="logo" src="Images/Logo.jpg"></image>
-                </a></li>
-                <li><span class="text" style="text-decoration: underline;  font-size: x-large;">Recipe Website</span>
+                <li>
+                    <a href="Recipe_HomePage.php">
+                        <image id="logo" src="Images/Logo.jpg"></image>
+                    </a>
                 </li>
-                <li><span class="text" style="font-size: medium; font-size: x-large;">&emsp; by Antonio Reda  &emsp;</span></li>
-                <li><button onclick="window.location.href='Recipe_HomePage.php'" class="text" style="font-size: medium; font-size: large;">&emsp; Back to Home  &emsp;</button></li>
+                <li><span class="Heading1">Recipe Website</span></li>
+                <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
+                <li>
+                    <button class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
+                </li>
+                <li class="login-container">
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                        <span class="user-info">
+                            Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
+                        </span>
+                        <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
+                    <?php else: ?>
+                        <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
+                    <?php endif; ?>
+                </li>
+                <li>
+                    <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
+                    <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
+                </li>
+                <li class="dropdown">
+                    <button class="button">Themes</button>
+                    <div class="dropdown-content" id="sidebar">
+                        <a href="#" onclick="styleHome()" class="text">Home</a>
+                        <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
+                        <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
+                        <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
+                        <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
+                        <a href="#" onclick="styleCave()" class="text">Seaside City</a>
+                        <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
+                        <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
+                        <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
+                    </div>
+                </li>
             </ul>
         </nav>
-        <div id="color-picker">
-            <div id="color-hide">
-                <div id="" style="background-color: #525252;; padding:5px;">
-                    <label class="text2"> Change the color of main components
-                        <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></input></div>
-                    </label>
-                    <label class="text2"> Change the button color
-                        <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></input></div>
-                    </label>
-                    <label class="text2"> Change the button hover color
-                        <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                        </input>        </label>
-                </div>
+
+        <div id="color-hide">
+            <div style="background-color: #525252; padding:5px;">
+                <label class="text2"> Change the color of main components
+                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></div>
+                </label>
+                <label class="text2"> Change the button color
+                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></div>
+                </label>
+                <label class="text2"> Change the button hover color
+                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
+                </label>
+                <label class="text2"> Change the text color
+                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
+                </label>
             </div>
         </div>
-
     </div>
 
     <main>
@@ -108,8 +171,8 @@
                
                
                 if (isset($_GET['submit2'])) {
-                    $recipeId = $_GET['submit2'];
-                    $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeId' ";
+                    $recipeName = $_GET['submit2'];
+                    $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeName' ";
                     $table = mysqli_query($con,$sqlquery) or die(mysqli_error($this->db_link));
                     //Adds the query to a variable $table
                     
@@ -120,31 +183,35 @@
                     $instr = $row['Instructions'] ;
                     $ingr = $row['Ingredients'];
                     $image = $row['Image'] ;
-                    $type = $row['Type'] ;              
-                  //retrieves the variables of the query in 
+                    $type = $row['Type'] ;
+                    $recipe_id = $row['recipe_id'];
                 }
                 $instr2=nl2br($instr);
                 $ingr2=nl2br($ingr);
-                 //below it displays the comntents of the query in a stylized manner
-                 echo " 
-                 <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
-                 <p class ='Heading1'>$name Recipe:</p>
-                 <img id='recipeInstructionsLogo' src='data:image/jpeg;base64," . base64_encode($image) . "' alt='No Image Uploaded'>
-                 </div>
-                 <div class='outerBox'>
-                 <div class = 'IngredientsBox'>
-                 <p class ='Heading1'>Ingredients:</p>
-                 <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
-                 </div>
-      
-                 <div class = 'InstructionsBox'>
-                 <p class ='Heading1'>Instructions:</p>
-                 <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
-                 </div>
-      
-                 </div>
-                 
-                 ";
+                //below it displays the contents of the query in a stylized manner
+                echo " 
+                <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
+                <button class='text' onclick='window.location.href=\"edit_recipe.php?Name=$name&id=$recipe_id\"'>Edit Recipe</button>
+                <p class ='Heading1'>$name Recipe:</p>
+                <img id='recipeInstructionsLogo' 
+                     src='data:image/jpeg;base64," . base64_encode($image) . "' 
+                     alt='Recipe Image'
+                     loading='lazy'
+                     onerror=\"this.src='Images/default-recipe.jpg';\">
+                </div>
+                <div class='outerBox'>
+                <div class = 'IngredientsBox'>
+                <p class ='Heading1'>Ingredients:</p>
+                <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
+                </div>
+    
+                <div class = 'InstructionsBox'>
+                <p class ='Heading1'>Instructions:</p>
+                <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
+                </div>
+                
+                </div>
+                ";
             }
            
             ?>
