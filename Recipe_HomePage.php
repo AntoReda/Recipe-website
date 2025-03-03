@@ -9,119 +9,59 @@ session_start();
    
     <title>Recipe Website</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="engine.js"></script>
     <script defer src="dynamic_styles.js"></script>
-    <script defer src="math.js"></script>
-    <style>
-        body {
-            display: none;
-        }
-    </style>
 </head>
 <script>
+    // Add both DOMContentLoaded and window.onload handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        showAll();
+    });
+    
+    window.onload = function() {
+        showAll();
+        // Also check and select the "ALL" radio button
+        document.getElementById('tab1').checked = true;
+        
+        // Check if we just reset styles (using a URL parameter)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('reset') === 'true') {
+            // Clear any stored color preferences
+            localStorage.removeItem('colorPreferences');
+            // Remove the reset parameter from URL to prevent repeated resets
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }
 
-     // Show or hide the div based on the selected tab
-     function show(tabName) 
-     {
+    // Show or hide the div based on the selected tab
+    function show(tabName) {
         //hides all recipe boxes
         var allOtherDivs = document.getElementsByName('recipeBox');
-        for (var i = 0; i < allOtherDivs.length; i++) 
-        {
+        for (var i = 0; i < allOtherDivs.length; i++) {
             allOtherDivs[i].style.display = 'none';
         } 
         //unhides the correct recipeBoxes
         var starDivs = document.getElementsByClassName(tabName); 
         for (var i = 0; i < starDivs.length; i++) {
-        starDivs[i].style.display = 'block';
+            starDivs[i].style.display = 'block';
         } 
     }
 
-  function showAll() {
-      
-    var allOtherDivs = document.getElementsByName('recipeBox');
+    function showAll() {
+        var allOtherDivs = document.getElementsByName('recipeBox');
         for (var i = 0; i < allOtherDivs.length; i++) {
             allOtherDivs[i].style.display = 'block';
-    } 
-    
-  }
+        } 
+    }
 </script>
 <body id="background">
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-<!--Title-->
-<div class="displayChange" id="top-bar">
-    <nav>
-        <ul>
-            <li>
-                <a href="Recipe_HomePage.php" >
-                <image id="logo" src="Images/Logo.jpg"></image> </a>
-           </li>
-            <li><span class="Heading1">Recipe Website</span>
-            </li>
-            <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
-            <li>
-                <button  class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
-            </li>
-            <li class="login-container">
-                <?php if(isset($_SESSION['user_id'])): ?>
-                    <span class="user-info">
-                        Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
-                    </span>
-                    <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
-                <?php else: ?>
-                    <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
-                <?php endif; ?>
-            </li>
-            <li>
-                <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
-                <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
-            </li>
-            <li class="dropdown">
-                <button class="button">Themes</button>
-                <div class="dropdown-content" id="sidebar">
-                    <a href="#" onclick="styleHome()" class="text">Home</a>
-                    <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
-                    <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
-                    <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
-                    <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
-                    <a href="#" onclick="styleCave()" class="text">Seaside City</a>
-                    <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
-                    <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
-                    <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
-                </div>
-            </li>
+<?php include 'loading_spinner.php'; ?>
 
-        </ul>
-    </nav>
-    
-        <div id="color-hide">
-            <div style="background-color: #918e8e; padding:5px;">
-                <label class="text2"> Change the color of main components
-                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></input></div>
-                </label>
-                <label class="text2"> Change the button color
-                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></input></div>
-                </label>
-                <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the text color
-                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
-                </label>
-            </div>
-        </div>
-
-</div>
-
+<?php include 'navbar.php'; ?>
 <main>
-
-
-    
-    <?php
-if(isset($_GET['success']) && $_GET['success'] == 'added') {
-    echo '<div class="message success">Recipe added successfully!</div>';
-}
+<?php
+    if(isset($_POST['success']) && $_POST['success'] == 'added') {
+        echo '<div class="message success">Recipe added successfully!</div>';
+    }
 ?>
     <!--Inside of the recipe list-->
     <?php
@@ -190,7 +130,7 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
             </div>
             <div class="tab">
                 <input type="radio" id="tab10" name="tabs">
-                <label for="tab9" onclick="show('fav')">Favourites</label>
+                <label for="tab10" onclick="show('fav')">Favourites</label>
             </div>
         </div>
     <?php endif; ?>
@@ -199,24 +139,34 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
         <div class='RecipeList'>
 <?php
     while($row = mysqli_fetch_array($table)) {
-        $name = htmlspecialchars($row['Name']);
-        $type = htmlspecialchars($row['Type']);
-        $recipe_id = $row['recipe_id'];
+        $name = htmlspecialchars($row['name']);
+        $type = htmlspecialchars($row['type']);
+        $recipe_id = $row['instructions'];
+        $isFavourite = $row['isFavourite'] ? 'fav' : ''; // Get favorite status
         
-        echo "<div name='recipeBox' class='$type' style='display:none;'>";
-        echo "<form action='Recipe_Instructions.php' method='get' id='recipeForm'>";
+        // Add 'fav' to the class list if it's a favorite
+        $classes = $type;
+        if ($row['isFavourite']) {
+            $classes .= ' fav';
+        }
+        
+        echo "<div name='recipeBox' class='$classes' style='display:none;'>";
+        echo "<form action='Recipe_Instructions.php' method='post' id='recipeForm'>";
         echo "<input type='hidden' name='id' value='$recipe_id'>";
         echo "<button type='submit' name='submit2' value='$name' id='recipeLogoBox'>";
+        if ($row['isFavourite']) {
+            echo "<span class='favorite-indicator'>★</span>";
+        }
         echo "<img id='recipeLogo' 
-                 src='data:image/jpeg;base64," . base64_encode($row['Image']) . "' 
+                 src='data:image/jpeg;base64," . base64_encode($row['image']) . "' 
                  alt='$name'
                  loading='lazy'
-                 onerror=\"this.src='Images/default-recipe.jpg';\">";
+                 onerror=\"this.src='Images/not-found.jpg';\">";
         echo htmlspecialchars($name);
         echo "</button></form></div>";
     }
 ?>
-            <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd' src='Images/add.png'></button></a>
+            <a href='AddRecipe.php'><button id='recipeButtonAdd'><img id='recipeAdd' src='Images/add.webp'></button></a>
         </div>
     </div>
 <?php
@@ -224,6 +174,20 @@ if(isset($_GET['success']) && $_GET['success'] == 'added') {
    
     
 </main>
+<style>
+.favorite-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: gold;
+    font-size: 24px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#recipeLogoBox {
+    position: relative;
+}
+</style>
 </body>
 
 </html>

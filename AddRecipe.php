@@ -39,102 +39,196 @@ if (!isset($_SESSION['user_id'])) {
     </script>
 </head>
 <body id="background">
-    <!--Title-->
-    <div class="displayChange" id="top-bar">
-        <nav>
-            <ul>
-                <li>
-                    <a href="Recipe_HomePage.php">
-                        <image id="logo" src="Images/Logo.jpg"></image>
-                    </a>
-                </li>
-                <li><span class="Heading1">Recipe Website</span></li>
-                <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
-                <li>
-                    <button class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
-                </li>
-                <li class="login-container">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <span class="user-info">
-                            Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
-                        </span>
-                        <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
-                    <?php else: ?>
-                        <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
-                    <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
-                </li>
-                <li class="dropdown">
-                    <button class="button">Themes</button>
-                    <div class="dropdown-content" id="sidebar">
-                        <a href="#" onclick="styleHome()" class="text">Home</a>
-                        <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
-                        <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
-                        <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
-                        <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
-                        <a href="#" onclick="styleCave()" class="text">Seaside City</a>
-                        <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
-                        <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
-                        <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-
-        <div id="color-hide">
-            <div style="background-color: #525252; padding:5px;">
-                <label class="text2"> Change the color of main components
-                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button color
-                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the text color
-                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
-                </label>
-            </div>
-        </div>
-    </div>
-
+<?php include 'loading_spinner.php'; ?>
+<?php include 'navbar.php'; ?>
     <main>
-        <div class='displayChange'>
-            <p class='Heading1'>Adding Recipes</p>
-            <div class='RecipeList'>
-                <form accept-charset='UTF-8' action='process_recipe.php' method='post' id='recipeForm' enctype='multipart/form-data'>
-                    <label for='recipeName'>Recipe Name:</label>
-                    <input type='text' id='recipeName' name='INrecipeName' required>
+        <div id="recipe-page" class="displayChange">
+            <form accept-charset="UTF-8" action="process_recipe.php" method="post" enctype="multipart/form-data">
+                <div class="recipe-header">
+                    <div class="recipe-title-edit">
+                        <p class="Heading1">Recipe Name:</p>
+                        <input type="text" 
+                               name="INrecipeName" 
+                               class="text Heading2" 
+                               required 
+                               oninvalid="this.setCustomValidity('Please enter a recipe name')"
+                               oninput="this.setCustomValidity('')"
+                               placeholder="Enter recipe name">
+                    </div>
+                    <div class="recipe-metadata">
+                        <div class="metadata-field">
+                            <label class="text">Duration (minutes):</label>
+                            <input type="number" 
+                                   name="duration" 
+                                   step="0.1" 
+                                   min="0" 
+                                   class="text"
+                                   required
+                                   placeholder="Enter duration">
+                        </div>
+                        <div class="metadata-field">
+                            <label class="text">Portions:</label>
+                            <input type="number" 
+                                   name="portions" 
+                                   step="0.1" 
+                                   min="0" 
+                                   class="text"
+                                   required
+                                   placeholder="Enter portions">
+                        </div>
+                    </div>
+                    <div class="header-buttons">
+                        <button type="submit" name="submit" class="text">Submit Recipe</button>
+                    </div>
+                </div>
 
-                    <label for='recipeIngredients'>Recipe Ingredients:<img src='Images/Ingredients.png' class='images'></label>
-                    <textarea onkeydown='handleKeyPress(event)' id='recipeIngredients' name='INrecipeIngredients' required></textarea>
+                <!-- Left Side -->
+                <div style="float: left; width: 45%;">
+                    <div class="recipe-main-info">
+                        <div class="recipe-image-container">
+                            <img id="recipeInstructionsLogo" src="Images/not-found.jpg" alt="Recipe Image">
+                            <div class="image-upload">
+                                <p class="Heading2">Add Main Image</p>
+                                <label class="file-upload-label">
+                                    <input type="file" name="INrecipeImage" accept="image/*" onchange="showUploadSuccess(this)">
+                                </label>
+                                <span class="upload-status text"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="IngredientsBox">
+                            <p class="Heading1">Ingredients</p>
+                            <textarea name="INrecipeIngredients" class="text Heading2" required></textarea>
+                        </div>
 
-                    <label for='recipeInstructions'>Recipe Instructions:<img src='Images/Instructions.png' class='images'></label>
-                    <textarea onkeydown='handleKeyPress(event)' id='recipeInstructions' name='INrecipeInstructions' required></textarea>
+                        <div class="recipe-category">
+                            <p class="Heading2">Food Category:</p>
+                            <select id="dropdown" name="type" class="text">
+                                <option value="meats">Meat</option>
+                                <option value="fish">Fish</option>
+                                <option value="veggies">Veggie</option>
+                                <option value="pastas">Pasta</option>
+                                <option value="sandwiches">Sandwich</option>
+                                <option value="soups">Soups</option>
+                                <option value="desserts">Desserts</option>
+                                <option value="others">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-                    <label for='recipeImage'>Recipe Image:</label>
-                    <input type='file' id='recipeImage' name='INrecipeImage' accept='image/*' required>
+                <!-- Right Side -->
+                <div style="float: right; width: 45%;">
+                    <div class="InstructionsBox">
+                        <p class="Heading1">Instructions:</p>
+                        <div id="steps-container">
+                            <div class="recipe-step">
+                                <div class="step-content">
+                                    <p class="Heading2">Step 1</p>
+                                    <img class="step-preview-image" src="Images/not-found.jpg" alt="Step 1 Image" style="max-width: 200px; margin: 10px 0;">
+                                    <textarea name="step_instructions[]" class="text Heading2" required></textarea>
+                                    <label class="file-upload-label">
+                                        <input type="file" name="step_image[]" accept="image/*" onchange="previewStepImage(this)">
+                                    </label>
+                                    <span class="upload-status text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="add-step" class="text">Add Step</button>
+                    </div>
+                </div>
 
-                    <label for='dropdown'>Pick a food category:</label>
-                    <select id='dropdown' name='Type'>
-                        <option value='meats'>Meat</option>
-                        <option value='fish'>Fish</option>
-                        <option value='veggies'>Veggie</option>
-                        <option value='pastas'>Pasta</option>
-                        <option value='sandwiches'>Sandwich</option>
-                        <option value='soups'>Soups</option>
-                        <option value='desserts'>Desserts</option>
-                        <option value='others'>Other</option>
-                    </select>
+                <div style="clear: both;"></div>
 
-                    <button type="submit" name="submit" class="buttons">Submit Recipe</button>
-                </form>
-            </div>
+                <div class="bottom-buttons">
+                    <button type="submit" name="submit" class="text">Submit Recipe</button>
+                </div>
+            </form>
         </div>
     </main>
+
+    <script>
+    document.getElementById('add-step').addEventListener('click', function() {
+        const stepsContainer = document.getElementById('steps-container');
+        const stepCount = stepsContainer.children.length;
+        
+        const newStep = document.createElement('div');
+        newStep.className = 'recipe-step';
+        newStep.innerHTML = `
+            <div class='step-content'>
+                <p class='Heading2'>Step ${stepCount + 1}</p>
+                <img class="step-preview-image" src="Images/not-found.jpg" alt="Step ${stepCount + 1} Image" style="max-width: 200px; margin: 10px 0;">
+                <textarea name='step_instructions[]' class='text Heading2' required></textarea>
+                <label class='file-upload-label'>
+                    <input type='file' name='step_image[]' accept='image/*' onchange='previewStepImage(this)'>
+                </label>
+                <span class='upload-status text'></span>
+            </div>
+        `;
+        
+        stepsContainer.appendChild(newStep);
+    });
+
+    function previewStepImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Find the closest step-preview-image element within this step
+                const previewImg = input.closest('.step-content').querySelector('.step-preview-image');
+                previewImg.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+            
+            // Keep the existing upload success message
+            showUploadSuccess(input);
+        }
+    }
+
+    function showUploadSuccess(input) {
+        const statusSpan = input.parentElement.nextElementSibling;
+        if (input.files && input.files[0]) {
+            statusSpan.textContent = "Upload successful!";
+            statusSpan.style.color = "var(--text-color)";
+            setTimeout(() => {
+                statusSpan.textContent = "";
+            }, 3000);
+        }
+    }
+
+    // Preview main image when selected
+    document.querySelector('input[name="INrecipeImage"]').addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('recipeInstructionsLogo').src = e.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+    </script>
+
+    <style>
+        .ingredient-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .small-btn {
+            padding: 0 10px;
+            height: 30px;
+            min-width: 30px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            margin: 10px 0;
+        }
+    </style>
 </body>
 </html>
