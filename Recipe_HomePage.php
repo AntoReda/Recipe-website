@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'db_config.php';
 ?>
 <!DOCTYPE html>
 
@@ -65,19 +66,8 @@ session_start();
 ?>
     <!--Inside of the recipe list-->
     <?php
-			$servername = "localhost"; // Replace with your server name if necessary
-            $username = "root"; // Replace with your MySQL username
-            $password = ""; // Replace with your MySQL password
-            $database = "recipewebsite"; // Replace with your database name
-            
-            // Create a connection
-            $con = mysqli_connect($servername, $username, $password, $database);
-						
-						// Check connection
-						if (mysqli_connect_errno())
-						{
-						echo "Failed to connect to MySQL: " . mysqli_connect_error();
-						}
+            $con = getConnection();
+    
 
             // In your database query section:
             if (isset($_SESSION['user_id'])) {

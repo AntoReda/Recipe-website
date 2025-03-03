@@ -1,17 +1,12 @@
 <?php
 session_start();
-
+require_once 'db_config.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location: redirect.php");
     exit();
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "recipewebsite";
-
-$con = mysqli_connect($servername, $username, $password, $database);
+$con = getConnection();
 
 if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -70,12 +65,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Convert instructions data to JSON
     $instructions_json = json_encode($instructions_data);
     
-    // Insert into database (for new recipes)
-    $stmt = $con->prepare("INSERT INTO recipes (Name, Instructions, Ingredients, Image, Type, duration, portions) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssdd", $name, $instructions_json, $ingredients, $main_image, $type, $duration, $portions);
+    // Insert into database
+    $stmt = $con->prepare("UPDATE recipes SET Name = ?, Instructions = ?, Ingredients = ?, Image = ?, duration = ?, portions = ? WHERE recipe_id = ?");
+    $stmt->bind_param("ssssddi", $name, $instructions_json, $ingredients, $main_image, $duration, $portions, $_POST['id']);
     
     if ($stmt->execute()) {
-        $new_recipe_id = $stmt->insert_id;
+        $new_recipe_id = $stmt->insert_id; // Get the ID of the newly inserted recipe
         
         // Start output buffering to ensure headers can be sent
         ob_start();
