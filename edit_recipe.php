@@ -1,32 +1,12 @@
 <?php
 session_start();
-
+require_once 'db_config.php';
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: redirect.php");
     exit();
 }
 
-// Database connection with reconnect functionality
-function getConnection() {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "recipewebsite";
-
-    $con = mysqli_connect($servername, $username, $password, $database);
-    
-    if (mysqli_connect_errno()) {
-        die("Failed to connect to MySQL: " . mysqli_connect_error());
-    }
-
-    // Set timeout only (max_allowed_packet needs to be set in MySQL configuration)
-    mysqli_query($con, "SET wait_timeout=28800"); // 8 hours
-
-    return $con;
-}
-
-// Get initial connection
 $con = getConnection();
 
 // Function to check and restore connection if needed

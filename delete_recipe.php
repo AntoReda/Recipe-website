@@ -1,26 +1,13 @@
 <?php
 session_start();
-
+require_once 'db_config.php';
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: redirect.php");
     exit();
 }
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "recipewebsite";
-
-// Create a connection
-$con = mysqli_connect($servername, $username, $password, $database);
-
-// Check connection
-if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-    exit();
-}
+$con = getConnection();
 
 // Check if recipe ID is provided
 if (!isset($_POST['recipe_id'])) {

@@ -1,13 +1,8 @@
 <?php
 session_start();
+require_once 'db_config.php';
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "recipewebsite";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $database);
+$conn = getConnection();
 
 // Check connection
 if ($conn->connect_error) {

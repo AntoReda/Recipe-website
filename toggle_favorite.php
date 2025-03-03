@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require_once 'db_config.php';
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Not logged in']);
     exit();
@@ -11,17 +11,7 @@ if (!isset($_POST['recipe_id'])) {
     exit();
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "recipewebsite";
-
-$con = mysqli_connect($servername, $username, $password, $database);
-
-if (mysqli_connect_errno()) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
-    exit();
-}
+$con = getConnection();
 
 $recipe_id = (int)$_POST['recipe_id'];
 
