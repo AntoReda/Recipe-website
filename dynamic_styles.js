@@ -143,15 +143,15 @@ function styleHome () {
 }
 
 function styleSalmon () {
-  style('#F2Be9C', '#F5E7B2', '#A07340', 'url(\'Images/salmon.png\')', 'White', 'White', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
+  style('#b1a1a2', '#F5E7B2', '#A07340', 'url(\'Images/salmon.png\')', 'White', 'White', 'rgb(108, 86, 26)', 'rgb(108, 86, 26)', 'grey')
 }
 
 function styleVeggies () {
-  style('#E0D4C6', '#AFC0AD', '#798177', 'url(\'Images/Veggies.jpg\')', 'White', 'White', 'rgb(204, 119, 8)', '#bbd0fc', 'white')
+  style('#7a8146', '#AFC0AD', '#d7e3d4', 'url(\'Images/Veggies.jpg\')', 'White', 'White', 'rgb(204, 119, 8)', '#bbd0fc', 'white')
 }
 
 function styleCloud () {
-  style('#FFF4D2', '#E3DFFD', '#E5D1FA', 'url(\'Images/Cloud.gif\')', 'White', 'White', 'rgb(124, 203, 255)', 'dimgray', 'rgb(124, 203, 255)')
+  style('#b0b0a0', '#E3DFFD', '#E5D1FA', 'url(\'Images/Cloud.gif\')', 'White', 'White', 'rgb(124, 203, 255)', 'dimgray', 'rgb(124, 203, 255)')
 }
 
 function styleRed () {
@@ -163,7 +163,7 @@ function styleCave () {
 }
 
 function styleDesert () {
-  style('#de7330', '#873924', '#F2DEBA', 'url(\'Images/Desert.gif\')', 'White', 'White', 'rgb(191, 59, 59)', '#873924', 'rgb(191, 59, 59)')
+  style('#be493c', '#873924', '#F2DEBA', 'url(\'Images/Desert.gif\')', 'White', 'White', 'rgb(191, 59, 59)', '#873924', 'rgb(191, 59, 59)')
 }
 
 function styleCube () {
@@ -175,19 +175,43 @@ function styleDark () {
 }
 
 function resetToDefaults() {
-    // Clear saved preferences
+    // Clear stored preferences
     localStorage.removeItem('stylePreferences');
     
-    // Apply default home theme
+    // Set default color values
+    const defaultColors = {
+        'color-picker1': '#E0D4C6',
+        'color-picker2': '#918e8e',
+        'color-picker3': '#798177',
+        'color-picker4': '#FFFFFF'  // Default text color should be white
+    };
+    
+    // Update color pickers and their boxes
+    Object.entries(defaultColors).forEach(([id, color]) => {
+        const picker = document.getElementById(id);
+        if (picker) {
+            picker.value = color;
+            const boxId = id.replace('picker', 'box');
+            const box = document.getElementById(boxId);
+            if (box) box.style.backgroundColor = color;
+        }
+    });
+    
+    // Apply the default home theme
     styleHome();
     
-    // Reset color pickers to default values
-    document.getElementById('color-picker1').value = '#E0D4C6';
-    document.getElementById('color-picker2').value = '#918e8e';
-    document.getElementById('color-picker3').value = '#798177';
-    document.getElementById('color-picker4').value = '#000000';
+    // Ensure text elements are set to white
+    const textElements = document.querySelectorAll('.text, .text2, nav ul li a, .dropdown-content a, .login-container, .change-text, .buttons, .button, button, .user-info');
+    textElements.forEach(element => {
+        if (!element.classList.contains('link-btn')) {
+            element.style.color = '#FFFFFF';
+        }
+    });
     
-    alert('Styles reset to defaults!');
+    // Save the default styles immediately after resetting
+    saveStylePreferences();
+    
+    alert('Styles reset to defaults and saved!');
 }
 
 function saveStylePreferences() {
@@ -197,7 +221,10 @@ function saveStylePreferences() {
     const buttons = document.querySelectorAll('button:not(.link-btn)');
     const buttonColor = buttons[0]?.style.backgroundColor || '#918e8e';
     const buttonHoverColor = document.getElementById('color-picker3')?.value || '#798177';
-    const textColor = document.getElementById('color-picker4')?.value || '#000000';
+    
+    // Get the current text color from an element that has it applied
+    const textElement = document.querySelector('.text');
+    const textColor = textElement ? getComputedStyle(textElement).color : '#FFFFFF';
     
     const stylePrefs = {
         mainColor: mainColor,
@@ -205,7 +232,7 @@ function saveStylePreferences() {
         buttonHoverColor: buttonHoverColor,
         textColor: textColor,
         backgroundUrl: document.getElementById('background').style.backgroundImage || 'url(\'Images/Logo.jpg\')',
-        buttonText: buttons[0]?.style.color || 'White',
+        buttonText: 'White',
         equalsColor: document.querySelector('.equal')?.style.backgroundColor || 'rgb(204, 119, 8)',
         linkColor: document.querySelector('.link-btn')?.style.color || '#bbd0fc',
         linkHover: 'white'
@@ -221,10 +248,7 @@ function applyGlobalStyles() {
     if (savedPrefs) {
         const prefs = JSON.parse(savedPrefs);
         
-        // Apply background first
-        document.getElementById('background').style.backgroundImage = prefs.backgroundUrl;
-        
-        // Apply all saved styles
+        // Apply saved styles
         style(
             prefs.mainColor,
             prefs.buttonColor,
@@ -237,16 +261,7 @@ function applyGlobalStyles() {
             prefs.linkHover
         );
         
-        // Update text colors
-        document.querySelectorAll('.text, .text2, nav ul li a, .dropdown-content a')
-            .forEach(element => element.style.color = prefs.textColor);
-            
-        // Set theme attribute
-        if (prefs.currentTheme) {
-            document.body.setAttribute('data-theme', prefs.currentTheme);
-        }
-        
-        // Update color pickers if they exist on this page
+        // Update color pickers if they exist
         const colorPickers = {
             'color-picker1': prefs.mainColor,
             'color-picker2': prefs.buttonColor,
@@ -261,6 +276,14 @@ function applyGlobalStyles() {
                 const boxId = id.replace('picker', 'box');
                 const box = document.getElementById(boxId);
                 if (box) box.style.backgroundColor = color;
+            }
+        });
+        
+        // Ensure text color is applied to all relevant elements
+        const textElements = document.querySelectorAll('.text, .text2, nav ul li a, .dropdown-content a, .login-container, .change-text, .buttons, .button, button, .user-info');
+        textElements.forEach(element => {
+            if (!element.classList.contains('link-btn')) {
+                element.style.color = prefs.textColor;
             }
         });
     }

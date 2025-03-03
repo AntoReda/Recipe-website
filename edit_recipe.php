@@ -1,69 +1,180 @@
 <?php
-// Database connection
-$servername = "localhost"; // Replace with your server name if necessary
-$username = "root"; // Replace with your MySQL username
-$password = ""; // Replace with your MySQL password
-$database = "recipewebsite"; // Replace with your database name
+session_start();
 
-// Create a connection
-$con = mysqli_connect($servername, $username, $password, $database);
-
-// Check connection
-if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
-
-// Get the recipe name from the URL
-$recipe_name = isset($_GET['Name']) ? $_GET['Name'] : '';
-$recipe_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-// Check if both identifiers are provided
-if (empty($recipe_name) || $recipe_id === 0) {
-    echo "Insufficient recipe information provided";
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: redirect.php");
     exit();
 }
 
-// Fetch the recipe details using both identifiers
-$sqlquery = "SELECT * FROM recipes WHERE Name='$recipe_name' AND recipe_id=$recipe_id";
-$result = mysqli_query($con, $sqlquery);
+// Database connection with reconnect functionality
+function getConnection() {
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $database = "recipewebsite";
 
-// Check if recipe exists
-if (!$result || mysqli_num_rows($result) == 0) {
-    echo "Recipe not found";
-    exit();
+    $con = mysqli_connect($servername, $username, $password, $database);
+    
+    if (mysqli_connect_errno()) {
+        die("Failed to connect to MySQL: " . mysqli_connect_error());
+    }
+
+    // Set timeout only (max_allowed_packet needs to be set in MySQL configuration)
+    mysqli_query($con, "SET wait_timeout=28800"); // 8 hours
+
+    return $con;
 }
 
-$recipe = mysqli_fetch_assoc($result);
+// Get initial connection
+$con = getConnection();
+
+// Function to check and restore connection if needed
+function checkConnection($con) {
+    if (!mysqli_ping($con)) {
+        mysqli_close($con);
+        return getConnection();
+    }
+    return $con;
+}
+
+// Before executing any query, check connection
+$con = checkConnection($con);
+
+// Debug: Print the GET parameters
+error_log("GET parameters: " . print_r($_GET, true));
+
+// Get the recipe name and ID from the URL - check both upper and lowercase
+$recipe_name = isset($_GET['name']) ? $_GET['name'] : (isset($_GET['name']) ? $_GET['name'] : '');
+$recipe_id = isset($_GET['recipe_id']) ? (int)$_GET['recipe_id'] : 0;
+
+// Debug: Print the values
+error_log("Recipe name: " . $recipe_name);
+error_log("Recipe ID: " . $recipe_id);
+
+// Initialize variables
+$name = '';
+$ingredients = '';
+$instructions = '';
+$current_image = '';
+$instructions_data = null;
+$duration = null;
+$portions = null;
+
+// Check if we have at least one identifier
+if (!empty($recipe_name) || $recipe_id !== 0) {
+    // Modify query to be more flexible
+    $query = "SELECT * FROM recipes WHERE ";
+    $params = [];
+    $types = "";
+    
+    if (!empty($recipe_name)) {
+        $query .= "name = ?";
+        $params[] = $recipe_name;
+        $types .= "s";
+    }
+    
+    if ($recipe_id !== 0) {
+        if (!empty($recipe_name)) {
+            $query .= " AND ";
+        }
+        $query .= "recipe_id = ?";
+        $params[] = $recipe_id;
+        $types .= "i";
+    }
+    
+    $stmt = $con->prepare($query);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $name = $row['name'];
+        $ingredients = $row['ingredients'];
+        $instructions = $row['instructions'];
+        $current_image = 'data:image/jpeg;base64,' . base64_encode($row['image']);
+        $instructions_data = json_decode($instructions, true);
+        $duration = $row['duration'];
+        $portions = $row['portions'];
+    } else {
+        echo "Recipe not found in database";
+        exit();
+    }
+} else {
+    echo "Please provide either a recipe name or ID";
+    exit();
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $instructions = $_POST['instructions'];
-    $ingredients = $_POST['ingredients'];
+    // Ensure connection is alive before large operation
+    $con = checkConnection($con);
     
-    // Handle image upload
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        // Simple file upload
-        $image = file_get_contents($_FILES['image']['tmp_name']);
-    } else {
-        $image = $recipe['Image']; // Keep existing image if no new one is uploaded
+    $recipe_id = $_POST['recipe_id'];
+    $name = $_POST['recipe_name'];
+    $ingredients = $_POST['ingredients'];
+    $duration = floatval($_POST['duration']);
+    $portions = floatval($_POST['portions']);
+    
+    // Build instructions JSON
+    $instructions_array = ['steps' => []];
+    foreach ($_POST['step_instructions'] as $index => $instruction) {
+        $step = [
+            'number' => $index + 1,
+            'instructions' => $instruction
+        ];
+        
+        // Handle step image if uploaded
+        if (isset($_FILES['step_image']['tmp_name'][$index]) && !empty($_FILES['step_image']['tmp_name'][$index])) {
+            $step_image = file_get_contents($_FILES['step_image']['tmp_name'][$index]);
+            $step['image'] = base64_encode($step_image);
+        } elseif ($instructions_data && isset($instructions_data['steps'][$index]['image'])) {
+            // Keep existing image if no new one uploaded
+            $step['image'] = $instructions_data['steps'][$index]['image'];
+        }
+        
+        $instructions_array['steps'][] = $step;
     }
-
-    // Update the query using prepared statements
-    $stmt = $con->prepare("UPDATE recipes SET Name = ?, Instructions = ?, Ingredients = ?, Image = ? WHERE Name = ? AND recipe_id = ?");
-    $stmt->bind_param("sssssi", $name, $instructions, $ingredients, $image, $recipe_name, $recipe_id);
-
-    // Execute the query
+    $instructions_json = json_encode($instructions_array);
+    
+    // Handle main image
+    if (isset($_FILES['main_image']) && $_FILES['main_image']['error'] == 0) {
+        $main_image = file_get_contents($_FILES['main_image']['tmp_name']);
+    } else {
+        // Keep existing image
+        $stmt = $con->prepare("SELECT Image FROM recipes WHERE recipe_id = ?");
+        $stmt->bind_param("i", $recipe_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $main_image = $row['Image'];
+    }
+    
+    // Update recipe
+    $stmt = $con->prepare("UPDATE recipes SET Name = ?, Instructions = ?, Ingredients = ?, Image = ?, duration = ?, portions = ? WHERE recipe_id = ?");
+    $stmt->bind_param("ssssddi", $name, $instructions_json, $ingredients, $main_image, $duration, $portions, $recipe_id);
+    
     if ($stmt->execute()) {
-        // Redirect with both identifiers
-        header("Location: Recipe_Instructions.php?submit2=$name&id=$recipe_id");
+        // Use POST redirect instead of GET
+        ob_start();
+        ?>
+        <form id="redirectForm" action="Recipe_Instructions.php" method="post">
+            <input type="hidden" name="id" value="<?php echo $recipe_id; ?>">
+            <input type="hidden" name="submit2" value="<?php echo htmlspecialchars($name); ?>">
+        </form>
+        <script>
+            document.getElementById('redirectForm').submit();
+        </script>
+        <?php
+        ob_end_flush();
         exit();
     } else {
         echo "Error updating recipe: " . $stmt->error;
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -82,95 +193,236 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </script>
 </head>
-<body id="background">
-    <!--Title-->
-    <div class="displayChange" id="top-bar">
-        <nav>
-            <ul>
-                <li>
-                    <a href="Recipe_HomePage.php">
-                        <image id="logo" src="Images/Logo.jpg"></image>
-                    </a>
-                </li>
-                <li><span class="Heading1">Recipe Website</span></li>
-                <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
-                <li>
-                    <button class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
-                </li>
-                <li class="login-container">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <span class="user-info">
-                            Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
-                        </span>
-                        <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
-                    <?php else: ?>
-                        <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
-                    <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
-                </li>
-                <li class="dropdown">
-                    <button class="button">Themes</button>
-                    <div class="dropdown-content" id="sidebar">
-                        <a href="#" onclick="styleHome()" class="text">Home</a>
-                        <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
-                        <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
-                        <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
-                        <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
-                        <a href="#" onclick="styleCave()" class="text">Seaside City</a>
-                        <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
-                        <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
-                        <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
 
-        <div id="color-hide">
-            <div style="background-color: #525252; padding:5px;">
-                <label class="text2"> Change the color of main components
-                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button color
-                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the text color
-                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
-                </label>
-            </div>
-        </div>
-    </div>
-
+<body id="background" class="displayChange">
+<?php include 'loading_spinner.php'; ?>
+<?php include 'navbar.php'; ?>
     <main>
-        <h1>Edit Recipe</h1>
-        <?php if ($recipe): ?>
-        <form method="post" enctype="multipart/form-data">
-            <label for="name">Recipe Name:</label>
-            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($recipe['Name']); ?>" required>
-
-            <label for="ingredients">Ingredients:</label>
-            <textarea id="ingredients" name="ingredients" required><?php echo htmlspecialchars($recipe['Ingredients']); ?></textarea>
-
-            <label for="instructions">Instructions:</label>
-            <textarea id="instructions" name="instructions" required><?php echo htmlspecialchars($recipe['Instructions']); ?></textarea>
-
-            <label for="image">Image:</label>
-            <input type="file" id="image" name="image" accept="image/*">
-            <?php if ($recipe['Image']): ?>
-                <div class="current-image">
-                    <p>Current image:</p>
-                    <img src="data:image/jpeg;base64,<?php echo base64_encode($recipe['Image']); ?>" alt="Current recipe image" style="max-width: 200px;">
+        <form method="POST" enctype="multipart/form-data">
+            <div id="recipe-page" class="displayChange">
+                <div class="recipe-header">
+                    <div class="recipe-title-edit">
+                        <p class="Heading1">Recipe Name:</p>
+                        <input type="text" 
+                               name="recipe_name" 
+                               value="<?php echo htmlspecialchars($name); ?>" 
+                               class="text Heading2"
+                               required
+                               oninvalid="this.setCustomValidity('Please enter a recipe name')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="recipe-metadata">
+                        <div class="metadata-field">
+                            <label class="text">Duration (minutes):</label>
+                            <input type="number" 
+                                   name="duration" 
+                                   value="<?php echo htmlspecialchars($duration ?? ''); ?>" 
+                                   step="0.1" 
+                                   min="0" 
+                                   class="text"
+                                   required>
+                        </div>
+                        <div class="metadata-field">
+                            <label class="text">Portions:</label>
+                            <input type="number" 
+                                   name="portions" 
+                                   value="<?php echo htmlspecialchars($portions ?? ''); ?>" 
+                                   step="0.1" 
+                                   min="0" 
+                                   class="text"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="header-buttons">
+                        <button type="submit" class="text">Save Recipe</button>
+                        <button type="button" class="text" onclick="confirmDelete()">Delete Recipe</button>
+                    </div>
                 </div>
-            <?php endif; ?>
 
-            <button type="submit" class="buttons">Save Changes</button>
+                <div class="recipe-content">
+                    <!-- Left Column -->
+                    <div class="recipe-main-info">
+                        <div class="recipe-image-container">
+                            <img class="recipe-main-image" 
+                                 src="<?php echo $current_image; ?>" 
+                                 alt="Recipe Image">
+                            <div class="image-upload">
+                                <h2>Change Main Image</h2>
+                                <label class="file-upload-label">
+                                    <input type="file" name="main_image" accept="image/*">
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="ingredients-section">
+                            <h2>Ingredients</h2>
+                            <textarea name="ingredients" class="ingredients-input"><?php echo htmlspecialchars($ingredients); ?></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="instructions-section">
+                        <h2>Instructions</h2>
+                        <div class="steps-container" id="steps-container">
+                            <?php
+                            if ($instructions_data && isset($instructions_data['steps'])) {
+                                foreach ($instructions_data['steps'] as $index => $step) {
+                                    echo "<div class='step-card'>
+                                            <div class='step-content'>
+                                                <h3>Step " . ($index + 1) . "</h3>
+                                                <textarea name='step_instructions[]' class='step-instructions'>" . htmlspecialchars($step['instructions']) . "</textarea>
+                                                <div class='step-image-upload'>
+                                                    <label class='file-upload-label'>
+                                                        <input type='file' name='step_image[]' accept='image/*' onchange='showUploadSuccess(this)'>
+                                                    </label>
+                                                    <span class='upload-status text'></span>
+                                                </div>
+                                            </div>";
+                                    
+                                    if (isset($step['image']) && $step['image']) {
+                                        echo "<div class='step-image-container'>
+                                                <img class='step-image' src='data:image/jpeg;base64,{$step['image']}' alt='Step " . ($index + 1) . " image'>
+                                              </div>";
+                                    }
+                                    echo "</div>";
+                                }
+                            }
+                            ?>
+                        </div>
+                        <button type="button" id="add-step" class="add-step-button">Add Step</button>
+                    </div>
+                </div>
+
+                <!-- Bottom buttons -->
+                <div class="bottom-buttons">
+                    <button type="submit" class="text">Save Recipe</button>
+                    <button type="button" class="text" onclick="confirmDelete()">Delete Recipe</button>
+                </div>
+            </div>
+
+            <!-- Hidden fields for recipe identification -->
+            <input type="hidden" name="recipe_id" value="<?php echo htmlspecialchars($recipe_id); ?>">
         </form>
-        <?php endif; ?>
     </main>
 </body>
 </html>
+
+
+<script>
+document.getElementById('add-step').addEventListener('click', function() {
+    const stepsContainer = document.getElementById('steps-container');
+    const stepCount = stepsContainer.children.length + 1;
+    
+    const newStep = document.createElement('div');
+    newStep.className = 'step-card';
+    newStep.innerHTML = `
+        <div class='step-content'>
+            <h3>Step ${stepCount}</h3>
+            <textarea name='step_instructions[]' class='step-instructions'></textarea>
+            <div class='step-image-upload'>
+                <label class='file-upload-label'>
+                    <input type='file' name='step_image[]' accept='image/*' onchange='previewStepImage(this)'>
+                </label>
+                <span class='upload-status text'></span>
+            </div>
+        </div>
+        <div class='step-image-container'>
+            <img class='step-image' src='Images/not-found.jpg' alt='Step ${stepCount} image'>
+        </div>
+    `;
+    
+    stepsContainer.appendChild(newStep);
+});
+
+function showUploadSuccess(input) {
+    const statusSpan = input.parentElement.nextElementSibling;
+    if (input.files && input.files[0]) {
+        statusSpan.textContent = "Upload successful!";
+        statusSpan.style.color = "var(--text-color)";
+        // Clear the message after 3 seconds
+        setTimeout(() => {
+            statusSpan.textContent = "";
+        }, 3000);
+    }
+}
+
+// Update existing file inputs to use the success message
+document.addEventListener('DOMContentLoaded', function() {
+    const existingInputs = document.querySelectorAll('input[type="file"]');
+    existingInputs.forEach(input => {
+        input.setAttribute('onchange', 'showUploadSuccess(this)');
+        // Add status span if it doesn't exist
+        if (!input.parentElement.nextElementSibling?.classList.contains('upload-status')) {
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'upload-status text';
+            input.parentElement.parentNode.insertBefore(statusSpan, input.parentElement.nextSibling);
+        }
+    });
+});
+
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this recipe?')) {
+        const recipeId = document.querySelector('input[name="recipe_id"]').value;
+        
+        // Create form for POST request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'delete_recipe.php';
+        
+        // Add recipe ID
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'recipe_id';
+        input.value = recipeId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+document.querySelector('input[name="main_image"]').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.recipe-main-image').src = e.target.result;
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+function previewStepImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Find the closest step-image element within this step
+            const previewImg = input.closest('.step-card').querySelector('.step-image');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+            } else {
+                // If no image exists yet, create one
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'step-image-container';
+                const newImage = document.createElement('img');
+                newImage.className = 'step-image';
+                newImage.src = e.target.result;
+                newImage.alt = 'Step image';
+                imageContainer.appendChild(newImage);
+                input.closest('.step-card').appendChild(imageContainer);
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+        
+        // Keep the existing upload success message
+        showUploadSuccess(input);
+    }
+}
+
+// Update existing file inputs to use the preview function
+document.addEventListener('DOMContentLoaded', function() {
+    const stepImageInputs = document.querySelectorAll('input[name="step_image[]"]');
+    stepImageInputs.forEach(input => {
+        input.setAttribute('onchange', 'previewStepImage(this)');
+    });
+});
+</script>

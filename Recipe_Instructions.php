@@ -14,56 +14,8 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <title>Recipe Instructions</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .buttons {
-            background-color: var(--button-color, #918e8e);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            display: block;  /* Ensures button is visible as a block element */
-            clear: both;     /* Clears any floats */
-            position: relative; /* Ensures proper stacking */
-            z-index: 1;      /* Ensures button is above other elements */
-        }
-
-        .buttons:hover {
-            background-color: var(--button-hover-color, #798177);
-        }
-
-        /* Adjust outer container to accommodate button */
-        .outerBox {
-            margin-bottom: 60px; /* Makes space for the button */
-        }
-    </style>
+    
     <script defer src="dynamic_styles.js"></script>
-    <script defer src="math.js"></script>
     <script>
         // Apply saved styles immediately to prevent flash
         const savedPrefs = localStorage.getItem('stylePreferences');
@@ -78,79 +30,10 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 
 <body id="background" class="displayChange">
-    <!-- Loading overlay -->
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-
-    <!--Title-->
-    <div class="displayChange" id="top-bar">
-        <nav>
-            <ul>
-                <li>
-                    <a href="Recipe_HomePage.php">
-                        <image id="logo" src="Images/Logo.jpg"></image>
-                    </a>
-                </li>
-                <li><span class="Heading1">Recipe Website</span></li>
-                <li><span class="text" style="font-size: large;">by Antonio Reda</span></li>
-                <li>
-                    <button class="text" id="color-picker-btn" onclick="colorPicker()">Color Picker</button>
-                </li>
-                <li class="login-container">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <span class="user-info">
-                            Welcome, <?php echo htmlspecialchars($_SESSION['firstname'] . ' ' . $_SESSION['lastname']); ?>
-                        </span>
-                        <button class="buttons" onclick="return handleLogout()" id="logout-btn">Logout</button>
-                    <?php else: ?>
-                        <button class="buttons" onclick="window.location.href='redirect.php'">Login/Signup</button>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <button id="save-styles-btn" class="buttons" onclick="saveStylePreferences()">Save Style</button>
-                    <button id="reset-styles-btn" class="buttons" onclick="resetToDefaults()">Reset Style</button>
-                </li>
-                <li class="dropdown">
-                    <button class="button">Themes</button>
-                    <div class="dropdown-content" id="sidebar">
-                        <a href="#" onclick="styleHome()" class="text">Home</a>
-                        <a href="#" onclick="styleSalmon()" class="text">Salmon</a>
-                        <a href="#" onclick="styleVeggies()" class="text">Veggies</a>
-                        <a href="#" onclick="styleCloud()" class="text">Cloud9</a>
-                        <a href="#" onclick="styleRed()" class="text">Autumn Leaves</a>
-                        <a href="#" onclick="styleCave()" class="text">Seaside City</a>
-                        <a href="#" onclick="styleDesert()" class="text">Sandy Plains</a>
-                        <a href="#" onclick="styleCube()" class="text">Cube Loop</a>
-                        <a href="#" onclick="styleDark()" class="text">Dark Mode</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-
-        <div id="color-hide">
-            <div style="background-color: #525252; padding:5px;">
-                <label class="text2"> Change the color of main components
-                    <div id="color-box1"><input type="color" id="color-picker1" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button color
-                    <div id="color-box2"><input type="color" id="color-picker2" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the button hover color
-                    <div id="color-box3"><input type="color" id="color-picker3" style="display:none;"></div>
-                </label>
-                <label class="text2"> Change the text color
-                    <div id="color-box4"><input type="color" id="color-picker4" style="display:none;"></div>
-                </label>
-            </div>
-        </div>
-    </div>
-
+<?php include 'loading_spinner.php'; ?>
+<?php include 'navbar.php'; ?>
     <main>
-
-        <!--Inside of the calculator box-->
-        <div class="displayChange">
-            <div class="RecipeList">
+        <div id="recipe-page" class="displayChange">
             <?php
 
                 $servername = "localhost"; // Replace with your server name if necessary
@@ -170,62 +53,131 @@ if (!isset($_SESSION['user_id'])) {
                
                
                
-                if (isset($_GET['submit2'])) {
-                    $recipeName = $_GET['submit2'];
+                if (isset($_POST['submit2'])) {
+                    $recipeName = $_POST['submit2'];
                     $sqlquery = "SELECT * FROM recipes WHERE Name='$recipeName' ";
                     $table = mysqli_query($con,$sqlquery) or die(mysqli_error($this->db_link));
-                    //Adds the query to a variable $table
                     
-                while($row = mysqli_fetch_array($table))
-                {
-                
-                    $name = $row['Name'] ;
-                    $instr = $row['Instructions'] ;
-                    $ingr = $row['Ingredients'];
-                    $image = $row['Image'] ;
-                    $type = $row['Type'] ;
-                    $recipe_id = $row['recipe_id'];
+                    // Check if we got any results
+                    if ($row = mysqli_fetch_array($table)) {
+                        $name = $row['name'];
+                        $instr = $row['instructions'];
+                        $ingr = $row['ingredients'];
+                        $image = $row['image'];
+                        $type = $row['type'];
+                        $recipe_id = $row['recipe_id'];
+                        $duration = $row['duration'];
+                        $portions = $row['portions'];
+                        
+                        $instr2 = nl2br($instr);
+                        $ingr2 = nl2br($ingr);
+                        
+                        // Check if instructions is valid JSON before decoding
+                        $instructions_data = json_decode($row['instructions'], true);
+                        
+                        echo "<div class='recipe-page'>";
+                        
+                        // Recipe Header Section
+                        echo "<div class='recipe-header'>
+                                <h1 class='recipe-title'>$name</h1>
+                                <div class='recipe-metadata'>
+                                    <div class='metadata-field'>
+                                        <span class='text'>Duration: $duration minutes</span>
+                                    </div>
+                                    <div class='metadata-field'>
+                                        <span class='text'>Portions: $portions</span>
+                                    </div>
+                                </div>
+                                <div class='recipe-actions'>
+                                    <button class='favorite-button " . ($row['isFavourite'] ? 'active' : '') . "' 
+                                            onclick='toggleFavorite($recipe_id)'>
+                                        " . ($row['isFavourite'] ? '★' : '☆') . "
+                                    </button>
+                                    <button class='edit-button' 
+                                            onclick='window.location.href=\"edit_recipe.php?name=$name&recipe_id=$recipe_id\"'>
+                                        Edit Recipe
+                                    </button>
+                                </div>
+                              </div>";
+                        
+                        // Recipe Main Content
+                        echo "<div class='recipe-content'>
+                                <!-- Left Column -->
+                                <div class='recipe-main-info'>
+                                    <div class='recipe-image-container'>
+                                        <img class='recipe-main-image' 
+                                             src='data:image/jpeg;base64," . base64_encode($row['image']) . "' 
+                                             alt='Recipe Image'
+                                             loading='lazy'
+                                             onerror=\"this.src='Images/black-square.jpg';\">
+                                    </div>
+                                    
+                                    <div class='ingredients-section'>
+                                        <h2>Ingredients</h2>
+                                        <div class='ingredients-list'>" . 
+                                            nl2br(htmlspecialchars($row['ingredients'])) . 
+                                        "</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right Column -->
+                                <div class='instructions-section'>
+                                    <h2>Instructions</h2>";
+                        
+                        if ($instructions_data && isset($instructions_data['steps'])) {
+                            echo "<div class='steps-container'>";
+                            foreach ($instructions_data['steps'] as $step) {
+                                echo "<div class='step-card'>
+                                        <div class='step-content'>
+                                            <h3>Step {$step['number']}</h3>
+                                            <p>" . nl2br(htmlspecialchars($step['instructions'])) . "</p>
+                                        </div>";
+                                
+                                if (isset($step['image']) && $step['image']) {
+                                    echo "<div class='step-image-container'>
+                                            <img class='step-image' 
+                                                 src='data:image/jpeg;base64,{$step['image']}' 
+                                                 alt='Step {$step['number']} image'
+                                                 loading='lazy'>
+                                          </div>";
+                                }
+                                echo "</div>";
+                            }
+                            echo "</div>";
+                        }
+                        
+                        echo "</div></div></div>";
+                    } else {
+                        echo "<p>Recipe not found</p>";
+                    }
                 }
-                $instr2=nl2br($instr);
-                $ingr2=nl2br($ingr);
-                //below it displays the contents of the query in a stylized manner
-                echo " 
-                <div style='border-right-style:groove; padding:0.7vw; height:25vw;'>
-                <button class='text' onclick='window.location.href=\"edit_recipe.php?Name=$name&id=$recipe_id\"'>Edit Recipe</button>
-                <p class ='Heading1'>$name Recipe:</p>
-                <img id='recipeInstructionsLogo' 
-                     src='data:image/jpeg;base64," . base64_encode($image) . "' 
-                     alt='Recipe Image'
-                     loading='lazy'
-                     onerror=\"this.src='Images/default-recipe.jpg';\">
-                </div>
-                <div class='outerBox'>
-                <div class = 'IngredientsBox'>
-                <p class ='Heading1'>Ingredients:</p>
-                <p accept-charset='UTF-8' class ='Heading2'>$ingr2:</p>
-                </div>
-    
-                <div class = 'InstructionsBox'>
-                <p class ='Heading1'>Instructions:</p>
-                <p accept-charset='UTF-8' class ='Heading2'>$instr2:</p>
-                </div>
-                
-                </div>
-                ";
-            }
            
             ?>
-                
-            </div>
         </div>
     </main>
-
     <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('loading-overlay').style.display = 'none';
-            }, 1000);
+    function toggleFavorite(recipeId) {
+        fetch('toggle_favorite.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'recipe_id=' + recipeId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const btn = document.querySelector('.favorite-button');
+                if (data.isFavourite) {
+                    btn.textContent = '★';
+                    btn.classList.add('active');
+                } else {
+                    btn.textContent = '☆';
+                    btn.classList.remove('active');
+                }
+            }
         });
+    }
     </script>
 </body>
 

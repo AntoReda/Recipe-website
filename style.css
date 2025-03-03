@@ -30,6 +30,7 @@
 #logo {
     width: 4.5vw;
     margin: 0;
+    border-radius: 30%;
 }
 
 /* CSS Reset */
@@ -41,7 +42,7 @@
 }
 /*CSS for main components*/
 .displayChange, .data, .sidebar {
-    background-color: #E0D4C6;
+    background-color: #010027;
     color: white;
 }
 .tab-container {
@@ -53,10 +54,10 @@
   }
   
 body {
-    background-color: #c0c0c0;
+    background-color: #04003d;
     font-family: 'Open Sans', sans-serif;
     background-repeat: no-repeat;
-    background-image: url("Images/Logo.jpg");
+    background-image: url("Images/background.jpg");
     background-size: cover;
     background-position: center;
     min-height: 100vh;
@@ -121,8 +122,8 @@ button:active {
     padding-bottom:0.6vw;
 }
 #recipeAdd{
-    width: 3.8vw;
-    height: 3.5vw;
+    width: 5.8vw;
+    height: 5.5vw;
 }
   
 .tab input[type="radio"] {
@@ -178,13 +179,16 @@ position: relative;
 }
 
 #recipeButtonAdd{
-    width: 5.8vw;
-    height: 4.5vw;
+    width: 7.8vw;
+    height: 6.5vw;
+    border-radius: 10%;
 }
+
 #recipeLogoBox {
-    width: 9.5vw;
+    width: 8.5vw;
     height: 8.5vw;
     margin-top: 0vw;
+    border-radius: 10%;
 }
 
 
@@ -193,7 +197,7 @@ position: relative;
 .RecipeList{
     z-index: 1;
     display: grid;
-    grid-template-columns: repeat(9, 2fr);
+    grid-template-columns: repeat(9, 1fr);
     gap:0.9vw;
     margin: 0px auto;
     padding:1vw;
@@ -260,7 +264,7 @@ position: relative;
 }
 
 .sidebar li{
-    background-color: #cac068;
+    background-color: #090057;
     color: #000000;
 }
 
@@ -306,7 +310,7 @@ li a {
 }
 
 li a:hover {
-    background-color: #505050;
+    opacity: 0.7;
 }
 
 /*Color picker*/
@@ -332,7 +336,6 @@ form {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color:#505050
   }
   
   /* Style form inputs and textarea */
@@ -350,8 +353,7 @@ form {
   
   /* Style file input */
   input[type="file"] {
-    margin:2vw;
-    color:#222;
+    display: none;
   }
   
   /* Style custom file input */
@@ -713,5 +715,511 @@ nav ul li {
     display: flex;
     align-items: center;
     white-space: nowrap;
+}
+
+.recipe-step {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.step-header {
+    margin-bottom: 10px;
+}
+
+.step-header h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.step-image {
+    display: block;
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.InstructionsBox {
+    margin: 0;
+    padding: 20px;
+    clear: both;
+}
+
+/* Container for the entire recipe content */
+.recipe-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Recipe Page Layout */
+#recipe-page {
+    max-width: 90%;
+    min-height: 80vh;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: var(--main-color);
+    border-radius: 10px;
+}
+/* Recipe Header */
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2vw;
+    padding-bottom: 1vw;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.recipe-title {
+    font-size: 2.5em;
+    color: inherit;
+    margin: 0;
+}
+
+.edit-button {
+    padding: 8px 16px;
+    background-color: rgba(76, 175, 80, 0.8);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: rgba(76, 175, 80, 1);
+}
+
+/* Recipe Content Layout */
+.recipe-content {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2vw;
+    margin-top: 2vw;
+}
+
+/* Left Column */
+.recipe-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.recipe-image-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.recipe-main-image {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    object-fit: cover;
+}
+
+.ingredients-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+.ingredients-section h2 {
+    color: inherit;
+    margin-bottom: 15px;
+}
+
+.ingredients-list {
+    line-height: 1.6;
+    color: inherit;
+}
+
+/* Right Column - Instructions */
+.instructions-section {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+.instructions-section h2 {
+    color: inherit;
+    margin-bottom: 20px;
+}
+
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.step-card {
+    padding: 25px;
+    gap: 30px;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h3 {
+    color: inherit;
+    margin-bottom: 10px;
+}
+
+.step-content p {
+    color: inherit;
+    line-height: 1.6;
+}
+
+.step-image-container {
+    width: 200px;
+}
+
+.step-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Responsive Design - Updated breakpoints */
+@media (max-width: 1200px) {
+    .recipe-content {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .recipe-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .Heading2 {
+        width: 100%;
+    }
+}
+
+/* Recipe Content Layout */
+.recipe-content {
+    display: grid;
+    grid-template-columns: 1fr 3fr; /* Same ratio as Recipe_Instructions */
+    gap: 40px;
+    margin-top: 30px;
+}
+
+/* Left Column */
+.recipe-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.recipe-image-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.recipe-main-image {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    object-fit: cover;
+}
+
+.ingredients-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+.ingredients-input {
+    width: 100%;
+    min-height: 200px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    margin: 10px 0;
+    resize: vertical;
+}
+
+/* Right Column - Instructions */
+.instructions-section {
+    padding: 30px;
+}
+
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.step-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    gap: 30px;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-instructions {
+    width: 100%;
+    min-height: 100px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    margin: 10px 0;
+    resize: vertical;
+}
+
+.step-image-container {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.step-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Header Styling */
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.recipe-title {
+    font-size: 2.5em;
+    color: inherit;
+    margin: 0;
+}
+
+/* Button Styling */
+.header-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.save-button, .add-step-button {
+    padding: 10px 20px;
+    background-color: rgba(76, 175, 80, 0.8);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.delete-button {
+    padding: 10px 20px;
+    background-color: rgba(244, 67, 54, 0.8);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.save-button:hover, .add-step-button:hover {
+    background-color: rgba(76, 175, 80, 1);
+}
+
+.delete-button:hover {
+    background-color: rgba(244, 67, 54, 1);
+}
+
+/* Headings */
+h2 {
+    color: inherit;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+h3 {
+    color: inherit;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .recipe-content {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .recipe-page {
+        max-width: 95%;
+        padding: 20px;
+    }
+    
+    .recipe-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .step-card {
+        flex-direction: column;
+    }
+    
+    .step-image-container {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}
+
+/* File input styling */
+input[type="file"] {
+    display: none;
+}
+
+.file-upload-label {
+    display: inline-block;
+    width: 2.4vw;
+    height: 3vw;
+    background-image: url('Images/uploads.png');
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0.5vw 0;
+}
+
+.file-upload-label:hover {
+    opacity: 0.8;
+}
+
+.ingredient-item {
+    display: flex;
+    gap: 1vw;
+    margin-bottom: 1vw;
+}
+
+.ingredient-item input {
+    flex: 1;
+    padding: 0.5vw;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.recipe-category select {
+    width: 100%;
+    padding: 0.5vw;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-top: 0.5vw;
+}
+
+/* Update input and textarea styling */
+.recipe-title-edit input,
+textarea.Heading2,
+.recipe-category select {
+    width: 100%;
+    padding: 0.5vw;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+textarea.Heading2 {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Clean up step styling */
+.recipe-step {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 1vw;
+    margin: 1vw 0;
+    border-radius: 8px;
+}
+
+/* Remove any duplicate button styles */
+.bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1vw;
+    margin-top: 2vw;
+    padding: 1vw;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure consistent header styling */
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2vw;
+    padding-bottom: 1vw;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Update responsive design */
+@media (max-width: 1200px) {
+    .recipe-content {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .recipe-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .Heading2 {
+        width: 100%;
+    }
+}
+
+/* Add this to your existing CSS */
+.recipe-metadata {
+    display: flex;
+    gap: 2vw;
+    margin: 1vw 0;
+}
+
+.metadata-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+}
+
+.metadata-field input {
+    width: 5vw;
+    padding: 0.5vw;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: inherit;
+}
+
+.metadata-field label {
+    color: inherit;
+    font-size: 1em;
 }
 
